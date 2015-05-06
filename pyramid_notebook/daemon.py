@@ -2,7 +2,7 @@ import os
 
 
 # Courtesy of http://stackoverflow.com/a/972383/315168
-def spawn_detached(path_to_executable, args):
+def spawn_detached(path_to_executable, args, pid_file, extra_pid_data):
     """Spawn a completely detached subprocess (i.e., a daemon).
 
     :return: pid of spawned child
