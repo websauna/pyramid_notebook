@@ -22,6 +22,7 @@ sudo start xvfb
 
 # Run tests using py.test test runner
 echo "Running tests"
+set +e
 py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-screenshot-dir=screenshots --ini=pyramid_notebook/demo/development.ini
 
 # Update data to codecov.io
