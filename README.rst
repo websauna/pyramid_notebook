@@ -1,6 +1,6 @@
 Embed IPython Notebook shell on your Pyramid web site.
 
-IPython Notebook <http://ipython.org/notebook.html>`_ is a de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook to reach of a single click on `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
+IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
 
 .. |docs| image:: https://readthedocs.org/projects/cryptoassetscore/badge/?version=latest
     :target: http://cryptoassetscore.readthedocs.org/en/latest/
@@ -9,7 +9,7 @@ IPython Notebook <http://ipython.org/notebook.html>`_ is a de facto tool for res
     :target: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/latest
 
 .. |cov| image:: https://codecov.io/bitbucket/miohtama/pyramid_notebook/coverage.svg?branch=master
-    :target: https://codecov.io/bitbucket/miohtama/cryptoassets?branch=master
+    :target: https://codecov.io/bitbucket/miohtama/pyramid_notebook?branch=master
 
 .. |downloads| image:: https://pypip.in/download/pyramid_notebook/badge.png
     :target: https://pypi.python.org/pypi/pyramid_notebook/
@@ -27,18 +27,13 @@ IPython Notebook <http://ipython.org/notebook.html>`_ is a de facto tool for res
     :target: https://pypi.python.org/pypi/pyramid_notebook/
     :alt: Supported Python versions
 
-*pyramid_notebook* is a Python framework for building Bitcoin, other cryptocurrency (altcoin) and cryptoassets services. Use cases include eCommerce, exhanges, wallets and payments.
-
 +-----------+-----------+
-| |docs|    | |cov|     |
+| |cov|     ||downloads||
 +-----------+-----------+
 | |ci|      | |license| |
 +-----------+-----------+
 | |versions|| |latest|  |
 +-----------+-----------+
-||downloads||           |
-+-----------+-----------+
-
 
 .. contents:: :local:
 
@@ -212,7 +207,8 @@ Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HT
 
 Notebook needs both HTTP and WebSocket channels. Because Pyramid is not aware of Websockets, on a production set up (not localhost) you need to use a front end web server to take care of WebSocket proxying.
 
-...
+Launched Notebook processes are daemonized and separated from the web server process. The communication between the web server and the daemon process happens through command line, PID file and context file (JSON dump of notebook context parameters, as described above).
+
 
 Scalability
 ===========

@@ -20,7 +20,7 @@ python setup.py develop
 
 # Run tests using py.test test runner
 echo "Running tests"
-py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
+py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
 # Update data to codecov.io
 codecov --token="$CODECOV_TOKEN"
