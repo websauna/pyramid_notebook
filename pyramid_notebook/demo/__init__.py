@@ -46,6 +46,7 @@ def main(global_config, **settings):
     config.add_route('login', '/login')
     config.add_route('shell1', '/shell1')
     config.add_route('shell2', '/shell2')
+    config.add_route('shutdown_notebook', '/notebook/shutdown')
     config.add_route('notebook_proxy', '/notebook/*remainder')
 
     config.scan(views)

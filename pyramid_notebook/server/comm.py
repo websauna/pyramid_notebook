@@ -1,29 +1,12 @@
-"""
-
-    Communicate with notebook daemon process with named file.
+"""Communicate extra parameters to the notebook through a JSON file.
 
     When the notebook daemon is started, dump all special settings, including ports, in a named file similar to PID file.
 
     Note that port is delivered through command line AND context file. This is to allow starting daemon from the command line for testing without cumbersome writing of context file first.
 
-    {
-        "http_port",
-        "pid",
-        "allow_origin"
-
-        # Overried websocket URL
-        "websocket_url",
-
-        # URL path where Notebook is proxyed
-        "notebook_path",
-
-        # Hashed information of the started notebook varibles.
-        # If hash changes -> extra_context has changed and we need to restart.
-        "extra_context_hash",
-        "extra_context": {}
-    }
 
 """
+import datetime
 import json
 import os
 import logging
@@ -51,7 +34,10 @@ def get_context_file_name(pid_file):
 
 
 def set_context(pid_file, context_info):
+    """Set context of running notebook.
 
+    :param context_info: dict of extra context parameters, see comm.py comments
+    """
     assert type(context_info) == dict
 
     port_file = get_context_file_name(pid_file)
@@ -59,7 +45,13 @@ def set_context(pid_file, context_info):
         f.write(json.dumps(context_info))
 
 
-def get_context(pid_file):
+def get_context(pid_file, daemon=False):
+    """Get context of running notebook.
+
+    :param daemon: Are we trying to fetch the context inside the daemon. Otherwise do the death check.
+
+    :return: dict or None if the process is dead/not launcherd
+    """
     port_file = get_context_file_name(pid_file)
 
     if not os.path.exists(port_file):
@@ -73,10 +65,11 @@ def get_context(pid_file):
             logger.error("Damaged context json data %s", json_data)
             return None
 
-        pid = data.get("pid")
-        if pid and not check_pid(int(pid)):
-            # The Notebook daemon has exited uncleanly, as the PID does not point to any valid process
-            return None
+        if not daemon:
+            pid = data.get("pid")
+            if pid and not check_pid(int(pid)):
+                # The Notebook daemon has exited uncleanly, as the PID does not point to any valid process
+                return None
 
 
         return data
@@ -84,5 +77,9 @@ def get_context(pid_file):
 
 def clear_context(pid_file):
     """Called at exit. Delete the context file to signal there is no active notebook."""
-    port_file = get_context_file_name(pid_file)
-    os.remove(port_file)
+    data = get_context(pid_file, daemon=True)
+    if "pid" in data:
+        del data["pid"]
+        # In the case we crashed set the terminated timestamp
+        data["terminated"] = str(datetime.datetime.now(datetime.timezone.utc))
+    set_context(pid_file, data)

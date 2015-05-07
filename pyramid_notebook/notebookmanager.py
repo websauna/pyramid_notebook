@@ -136,7 +136,10 @@ class NotebookManager:
             os.remove(notebook_file)
 
     def is_running(self, name):
-        return self.get_notebook_status(name) is not None
+        status = self.get_notebook_status(name)
+        if status:
+            return status.get("pid") is not None
+        return False
 
     def is_same_context(self, context_a, context_b):
         if context_a == context_b:
@@ -145,7 +148,7 @@ class NotebookManager:
         context_a = context_a or {}
         context_b = context_b or {}
 
-        return context_a.get("context_hash") != context_b.get("context_hash")
+        return context_a.get("context_hash") == context_b.get("context_hash")
 
 
     def start_notebook_on_demand(self, name, context):
@@ -159,7 +162,7 @@ class NotebookManager:
 
             last_context = self.get_context(name)
             logger.info("Notebook context change detected for {}".format(name))
-            if self.is_same_context(context, last_context):
+            if not self.is_same_context(context, last_context):
                 self.stop_notebook(name)
             else:
                 return last_context, False

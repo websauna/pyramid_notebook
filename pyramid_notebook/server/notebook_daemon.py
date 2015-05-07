@@ -1,17 +1,15 @@
-"""Daemonized Python Notebook process with pre-allocated port."""
+"""Daemonized Python Notebook process with pre-allocated port, kill timeout and extra argument passing through JSON file."""
 from contextlib import redirect_stdout
 import logging
 
-import sys
 import json
-import time
 from IPython.nbformat.v4.nbjson import JSONWriter
-from IPython.nbformat.v4.rwbase import NotebookWriter
 import io
 import psutil
-import signal
 import os
 import atexit
+import signal
+import sys
 
 import daemonocle
 from daemonocle import expose_action
@@ -22,6 +20,7 @@ port = None
 kill_timeout = None
 extra_argv = None
 pid_file = None
+
 
 class NotebookDaemon(daemonocle.Daemon):
 
@@ -64,7 +63,7 @@ def create_named_notebook(fname, context):
     from IPython.nbformat import v4 as nbf
 
     # Courtesy of http://nbviewer.ipython.org/gist/fperez/9716279
-    text = "Welcome to pyramid_notebook shell! -Mikko, https://opensourcehacker.com"
+    text = "Welcome to *pyramid_notebook!* -Mikko, https://opensourcehacker.com"
     cells = [nbf.new_markdown_cell(text)]
 
     greeting = context.get("greeting")
@@ -110,9 +109,15 @@ def run_notebook(foreground=False):
     os.environ["IPYTHONDIR"] = os.path.join(os.getcwd(), ".ipython")
 
     # Update context file with command line port settings
-    context = comm.get_context(pid_file)
-    if not context:
-        context = {}
+    context = comm.get_context(pid_file, daemon=True)
+
+    if foreground:
+        if not context:
+            context = {}
+    else:
+        if not context:
+            # We cannot let daemons start up with context, because it keeps running, reverses port but would do all proxy setup wrong
+            sys.exit("Daemonized process needs an explicit context.json file and could not read one from {}".format(os.path.dirname(pid_file)))
 
     context["http_port"] = port
     context["pid"] = os.getpid()
@@ -120,11 +125,6 @@ def run_notebook(foreground=False):
     comm.set_context(pid_file, context)
 
     create_named_notebook(notebook_name, context)
-
-    def clear_context():
-        comm.clear_context(pid_file)
-
-    atexit.register(clear_context)
 
     # Grind through with print as IPython launcher would mess our loggers
     print("Launching on localhost:{}, having context {}".format(port, str(context)), file=sys.stderr)
@@ -139,6 +139,7 @@ def run_notebook(foreground=False):
         config.NotebookApp.base_url = context.get("notebook_path", "/notebook")
         config.NotebookApp.log_level = logging.DEBUG
         config.NotebookApp.allow_origin = context.get("allow_origin", "http://localhost:{}/".format(port))
+        config.NotebookApp.extra_template_paths = context.get("extra_template_paths", [])
 
         if "websocket_url" in context:
             websocket_url = context.get("websocket_url", "http://localhost:{}/".format(port))
@@ -158,6 +159,12 @@ def run_notebook(foreground=False):
     except Exception as e:
         import traceback ; traceback.print_exc()
         sys.exit(str(e))
+
+
+def clear_context():
+    comm.clear_context(pid_file)
+    sys.stdout.flush()
+    sys.stderr.flush()
 
 if __name__ == '__main__':
 
@@ -180,9 +187,10 @@ if __name__ == '__main__':
     if action == "fg":
         # Test run on foreground
         os.chdir(workdir)
+        atexit.register(clear_context)
         run_notebook(foreground=True)
     else:
-        daemon = NotebookDaemon(pidfile=pid_file, workdir=workdir)
+        daemon = NotebookDaemon(pidfile=pid_file, workdir=workdir, shutdown_callback=clear_context())
         daemon.worker = run_notebook
         daemon.do_action(action)
 

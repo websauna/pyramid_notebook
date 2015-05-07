@@ -11,7 +11,8 @@ os.makedirs(NOTEBOOK_FOLDER, exist_ok=True)
 
 logging.basicConfig(level=logging.DEBUG)
 
-USER = "test{}".format(random.randint(0, 1000))
+USER = "testuser1"
+
 
 def test_spawn():
     """Create a Python Notebook process."""

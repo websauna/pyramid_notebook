@@ -4,7 +4,10 @@
 def make_startup(notebook_context):
     nc = notebook_context
 
+    add_greeting(nc, "Note: default.ipynb notebook will be cleared upon exit - do not save\n\n")
     add_greeting(nc, "Available variables and functions:\n")
+
+
 
     add_script(nc, "import datetime")
     add_greeting(nc, "* **datetime** - Python datetime - https://docs.python.org/3.5/library/datetime.html")
