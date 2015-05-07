@@ -49,14 +49,27 @@ Try accounts is *user* / *password* and *user2* / *password*
 Installation
 ============
 
-It is recommend to instal using `pip` and `virtualenv`. `Python guide for package installation <https://packaging.python.org/en/latest/installing.html>`. ::
+It is recommend to install using ``pip`` and ``virtualenv``. `Python guide for package installation <https://packaging.python.org/en/latest/installing.html>`_. ::
 
     pip install pyramid_notebook
 
 Usage
 =====
 
-x
+Your application needs to configure three custom views
+
+* ``launch_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user.
+
+* ``shutdown_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.shutdown_notebook()`` to force close a notebook for a user.
+
+* ``notebook_proxy()`` which does authentication and authorization and calls ``pyramid_notebook.views.notebook_proxy()`` to proxy HTTP request to upstream IPython Notebook server bind to a localhost port. `notebook_proxy` is mapped to `/notebook/` path in your site URL. Both your site and Notebook upstream server should agree on this location.
+
+For complete examples see the demo application.
+
+Pyramid configuration parameters
+--------------------------------
+
+
 
 Notebook context parameters
 ---------------------------
@@ -198,6 +211,12 @@ Consider requiring your website admins to use two-factor authentication <http://
 Development
 ===========
 
+* `Source code <https://bitbucket.org/miohtama/pyramid_notebook>`_
+
+* `Issue tracker <https://bitbucket.org/miohtama/pyramid_notebook>`_
+
+* `Documentation <https://bitbucket.org/miohtama/pyramid_notebook>`_
+
 Tests
 ------
 
@@ -217,6 +236,3 @@ Run full test coverage::
 
     py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
-Upload results::
-
-    d1ba224f-3e7d-4764-86b5-x

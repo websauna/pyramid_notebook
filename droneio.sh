@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Need to upgrade to Python 3.4
 sudo add-apt-repository ppa:fkrull/deadsnakes > /dev/null 2>&1
 sudo apt-get -qq update > /dev/null 2>&1
@@ -11,7 +13,7 @@ python3.4 -m venv venv
 
 # Make sure pip itself is up to date
 pip install -U --quiet pip
-pip install --quiet -r test-extra-requirements.txt
+pip install --quiet -r test-requirements.txt
 
 # Run tests using py.test test runner
 echo "Running tests"
