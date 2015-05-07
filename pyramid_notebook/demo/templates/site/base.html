@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    {% block description %}
+        {% include "site/description.html" %}
+    {% endblock description %}
+
+    {% block meta %}
+        {% include "site/meta.html" %}
+    {% endblock meta %}
+
+    {% block css %}
+        {% include "site/css.html" %}
+    {% endblock %}
+
+    {% block extra_head %}
+        {# Pages can register their page specific CSS/JS here #}
+    {% endblock %}
+
+</head>
+
+{# body_classes allows to insert extra CSS classes on <body> tag #}
+<body
+    {% block body_classes %}
+    {% endblock body_classes %}
+    >
+
+    {# body block contains the whole page without a navigation frame and the analytics script #}
+    {% block body %}
+
+        {# Navigation #}
+        {% block header %}
+            {% include "site/header.html" %}
+        {% endblock header %}
+
+        {# main is the content without margins and flash messages #}
+        {% block main %}
+            <main>
+
+                <div class="messages">
+                    {% block messages %}
+                        {% include "site/messages.html" %}
+                    {% endblock messages %}
+                </div>
+
+                {# content is the content with margins #}
+                <div class="container">
+                    {% block content %}
+                    {% endblock content %}
+                </div>
+            </main>
+        {% endblock main %}
+
+        {% block footer %}
+            {% include "site/footer.html" %}
+        {% endblock footer %}
+
+        {% block body_end %}
+        {% endblock body_end %}
+
+        {# script is shared site JavaScript #}
+        {% block script %}
+            {% include "site/javascript.html" %}
+        {% endblock script %}
+
+        {# custom_script is page specific JavaScript #}
+        {% block custom_script %}
+        {% endblock custom_script %}
+
+    {% endblock body %}
+
+    {# analytics is tracking JavaScript #}
+    {% block analytics %}
+        {% include "site/analytics.html" %}
+    {% endblock analytics %}
+
+</body>
+</html>

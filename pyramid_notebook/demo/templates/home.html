@@ -1,0 +1,15 @@
+{% extends "site/base.html" %}
+
+{% block content %}
+<h1>pyramid_notebook test application</h1>
+
+    <p>
+        <a href="{{ 'shell1'|route_url }}">Launch test notebook 1</a>
+    </p>
+
+
+    <p>
+        <a href="{{ 'shell2'|route_url }}">Launch test notebook 2</a>
+    </p>
+
+{% endblock %}
