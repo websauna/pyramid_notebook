@@ -77,7 +77,7 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
-        'test': ['pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov"],
+        'test': ['codecov', 'pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov"],
     },
 
     # To provide executable scripts, use entry points in preference to the
