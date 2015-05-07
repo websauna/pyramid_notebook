@@ -1,0 +1,18 @@
+[run]
+branch = True
+source = codecov
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if .debug:
+    raise NotImplementedError
+    if __name__ == .__main__.:
+
+
+ignore_errors = True
+omit =
+    pyramid_notebook/demo/auth.py
+    pyramid_notebook/demo/view.py
+    setup.py

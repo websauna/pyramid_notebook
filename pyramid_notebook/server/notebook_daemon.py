@@ -5,7 +5,6 @@ import logging
 import json
 from IPython.nbformat.v4.nbjson import JSONWriter
 import io
-import psutil
 import os
 import atexit
 import signal
@@ -15,6 +14,13 @@ import daemonocle
 from daemonocle import expose_action
 from daemonocle import DaemonError
 from pyramid_notebook.server import comm
+
+try:
+    import coverage
+    coverage.process_startup()
+except ImportError:
+    # http://nedbatchelder.com/code/coverage/subprocess.html
+    pass
 
 port = None
 kill_timeout = None
@@ -26,32 +32,6 @@ class NotebookDaemon(daemonocle.Daemon):
 
     def __init__(self, **kwargs):
         super(NotebookDaemon, self).__init__(**kwargs)
-
-    @expose_action
-    def status(self):
-        """Status command reports active port etc. ."""
-        if self.pidfile is None:
-            raise DaemonError('Cannot get status of daemon without PID file')
-
-        pid = self._read_pidfile()
-        if pid is None:
-            self._emit_message(json.dumps(dict(status="stopped")))
-            sys.exit(0)
-
-        proc = psutil.Process(pid)
-
-        port = comm.read_context_info(self.pidfile)
-
-        # Default data
-        data = {
-            'pid': pid,
-            'status': 'running',
-            'proc_status': proc.status(),
-            'port': port,
-        }
-
-        self._emit_message(json.dumps(data))
-
 
 
 def create_named_notebook(fname, context):
@@ -163,8 +143,7 @@ def run_notebook(foreground=False):
 
 def clear_context():
     comm.clear_context(pid_file)
-    sys.stdout.flush()
-    sys.stderr.flush()
+
 
 if __name__ == '__main__':
 
@@ -193,5 +172,3 @@ if __name__ == '__main__':
         daemon = NotebookDaemon(pidfile=pid_file, workdir=workdir, shutdown_callback=clear_context())
         daemon.worker = run_notebook
         daemon.do_action(action)
-
-    sys.exit(0)

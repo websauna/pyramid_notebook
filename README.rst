@@ -46,6 +46,13 @@ Visit at `http://localhost:9000 <http://localhost:9000>`_.
 
 Try accounts is *user* / *password* and *user2* / *password*
 
+Installation
+============
+
+It is recommend to instal using `pip` and `virtualenv`. `Python guide for package installation <https://packaging.python.org/en/latest/installing.html>`. ::
+
+    pip install pyramid_notebook
+
 Usage
 =====
 
@@ -189,9 +196,27 @@ Two-factor authentication
 Consider requiring your website admins to use two-factor authentication <http://en.wikipedia.org/wiki/Two_factor_authentication>`_ to protect against admin credential loss due to malware, keylogging and such nasties. Example two-factor library for Python <http://code.thejeshgn.com/pyg2fa>`_.
 
 Development
-============
+===========
+
+Tests
+------
+
+.. note ::
+
+    Due to complexity of IPython Notebook interaction browser tests must be executed with full Firefox or Chrome driver.
+
+Install test dependencies::
+
+    pip install -e ".[test]"
 
 Running single test::
 
      py.test tests/* --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
+Run full test coverage::
+
+    py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
+
+Upload results::
+
+    d1ba224f-3e7d-4764-86b5-x

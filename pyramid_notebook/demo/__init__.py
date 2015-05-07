@@ -1,33 +1,14 @@
 import logging
-from docutils.core import publish_parts
 from pyramid.config import Configurator
 from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.interfaces import IDebugLogger
-import re
-
-from pyramid.httpexceptions import HTTPFound
-
-from pyramid.view import (
-    view_config,
-    forbidden_view_config,
-    )
-
-from pyramid.security import (
-    remember,
-    forget,
-    )
-
 
 from . import views
 from . import auth
 
-USERS = {
-    "admin": "admin"
-}
-
 
 def mycheck(username, password, request):
-    # Cue in a quote from a movie
+    """Allow in any user with password "password"""""
     pwd_ok = password == "password"
     if not pwd_ok:
         return None

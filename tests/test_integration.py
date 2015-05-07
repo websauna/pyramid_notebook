@@ -33,37 +33,46 @@ def test_notebook_template(web_server, browser):
     assert b.is_text_present("pyramid_notebook test application")
 
 
+def hacker_typing(browser, spinter_selection, code):
+    """We need to break Splinter abstraction and fall back to raw Selenium here.
+
+    Note: There is a bug of entering parenthesis due to IPython capturing keyboard input.
+    """
+    elem = spinter_selection[0]._element
+    driver = browser.driver
+
+    # Activate IPython input mode
+    ActionChains(driver).click(elem).send_keys(Keys.ENTER).perform()
+
+    # Tyoe int he code
+    a = ActionChains(driver)
+    a.send_keys(code)
+    a.key_down(Keys.ALT).send_keys(Keys.ENTER).key_up(Keys.ALT)
+    a.perform()
+
 
 def test_add_context_variables(web_server, browser):
-    """See that we get custom templates through IPython Notebook"""
+    """We can perform meaningful calculations on variables set in startup.py"""
 
     b = browser
     b.visit("http://username:password@localhost:{}/shell2".format(web_server["port"]))
 
-    time.sleep(3)
+    time.sleep(1)
     assert b.is_text_present("a - varible a")
 
     # Type in a sample equation suing predefined variable
+    hacker_typing(b, b.find_by_css(".code_cell"), 'print("Output of a + b is", a + b)')
 
-    b.find_by_css(".input").click()
-    import ipdb ; ipdb.set_trace()
-    b.find_by_css("#notebook").send_keys(Keys.ENTER)
-
-    # ActionChains(b).send_keys(Keys.ENTER).perform()
-    import ipdb ; ipdb.set_trace()git
-    b.find_by_css("textarea").type('print("Output of a is ", a + 1')
-
-    for c in 'print("Output of a is ", a + 1':
-        e =  b.find_by_css(".code_cell")
-        ActionChains(e).send_keys(c).perform()
-        time.sleep(0.05)
-
-    ActionChains(b).key_down(Keys.ALT).send_keys(Keys.ENTER).key_up(Keys.ALT).perform()
-    time.sleep(3)
+    assert b.is_text_present("Output of a + b is foobar")
 
     # Back to the home
-    b.find_by_css_class("#pyramid_notebook_shutdown").click()
-    time.sleep(3)
+    b.find_by_css("#pyramid_notebook_shutdown").click()
+
+    # There should be alert "Do you really wish to leave notebook?"
+    alert = b.driver.switch_to_alert()
+    alert.accept()
+
+    time.sleep(1)
     assert b.is_text_present("pyramid_notebook test application")
 
 

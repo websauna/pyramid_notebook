@@ -11,3 +11,8 @@ node_modules
 .vagrant
 *.ipynb
 .ipynb-checkpoints
+
+# splinter unnecessary output
+tests.*
+.coverage
+coverage.xml

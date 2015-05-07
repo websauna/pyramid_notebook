@@ -2,24 +2,25 @@
 
 
 def make_startup(notebook_context):
+
+    # Set up some default imports and variables
+
     nc = notebook_context
 
-    add_greeting(nc, "Note: default.ipynb notebook will be cleared upon exit - do not save\n\n")
-    add_greeting(nc, "Available variables and functions:\n")
-
-
+    add_greeting(nc, "Note: default.ipynb notebook will be cleared upon exit - do not save")
+    add_greeting(nc, "Available variables and functions:")
 
     add_script(nc, "import datetime")
     add_greeting(nc, "* **datetime** - Python datetime - https://docs.python.org/3.5/library/datetime.html")
 
     add_script(nc, "import time")
-    nc["greeting"] += "* **time** - Python time- https://docs.python.org/3.5/library/time.html\n"
+    add_greeting(nc, "* **time** - Python time- https://docs.python.org/3.5/library/time.html")
 
     try:
         import transaction
 
-        nc["startup"] += "import transaction\n"
-        nc["greeting"] += "* **transaction** - Zope transaction manager, e.g. transaction.commit()\n"
+        add_script(nc,  "import transaction\n")
+        add_greeting(nc, "* **transaction** - Zope transaction manager, e.g. transaction.commit()")
 
     except ImportError:
         pass

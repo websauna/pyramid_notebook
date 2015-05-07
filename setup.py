@@ -70,7 +70,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['peppercorn', 'psutil', 'port-for', "ipython[notebook]", 'pyramid', 'daemonocle'],
+    install_requires=['port-for', "ipython[notebook]", 'pyramid', 'daemonocle'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -78,7 +78,7 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
-        'test': ['pytest', 'coverage', 'pyramid_jinja2', 'paste'],
+        'test': ['pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov"],
     },
 
     # To provide executable scripts, use entry points in preference to the
