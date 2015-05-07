@@ -217,6 +217,18 @@ Notebook needs both HTTP and WebSocket channels. Because Pyramid is not aware of
 
 Launched Notebook processes are daemonized and separated from the web server process. The communication between the web server and the daemon process happens through command line, PID file and context file (JSON dump of notebook context parameters, as described above).
 
+Local deployment
+----------------
+
+.. image :: docs/localhost_deployment.png
+
+
+Production deployment
+---------------------
+
+.. image :: docs/localhost_deployment.png
+
+
 
 Scalability
 ===========
