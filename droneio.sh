@@ -15,6 +15,9 @@ python3.4 -m venv venv
 pip install -U --quiet pip
 pip install --quiet -r test-requirements.txt
 
+# Make venv aware of our own package
+python setup.py develop
+
 # Run tests using py.test test runner
 echo "Running tests"
 py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template

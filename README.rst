@@ -2,6 +2,44 @@ Embed IPython Notebook shell on your Pyramid web site.
 
 IPython Notebook <http://ipython.org/notebook.html>`_ is a de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook to reach of a single click on `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
 
+.. |docs| image:: https://readthedocs.org/projects/cryptoassetscore/badge/?version=latest
+    :target: http://cryptoassetscore.readthedocs.org/en/latest/
+
+.. |ci| image:: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/status.png
+    :target: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/latest
+
+.. |cov| image:: https://codecov.io/bitbucket/miohtama/pyramid_notebook/coverage.svg?branch=master
+    :target: https://codecov.io/bitbucket/miohtama/cryptoassets?branch=master
+
+.. |downloads| image:: https://pypip.in/download/pyramid_notebook/badge.png
+    :target: https://pypi.python.org/pypi/pyramid_notebook/
+    :alt: Downloads
+
+.. |latest| image:: https://pypip.in/version/pyramid_notebook/badge.png
+    :target: https://pypi.python.org/pypi/pyramid_notebook/
+    :alt: Latest Version
+
+.. |license| image:: https://pypip.in/license/pyramid_notebook/badge.png
+    :target: https://pypi.python.org/pypi/pyramid_notebook/
+    :alt: License
+
+.. |versions| image:: https://pypip.in/py_versions/pyramid_notebook/badge.png
+    :target: https://pypi.python.org/pypi/pyramid_notebook/
+    :alt: Supported Python versions
+
+*pyramid_notebook* is a Python framework for building Bitcoin, other cryptocurrency (altcoin) and cryptoassets services. Use cases include eCommerce, exhanges, wallets and payments.
+
++-----------+-----------+
+| |docs|    | |cov|     |
++-----------+-----------+
+| |ci|      | |license| |
++-----------+-----------+
+| |versions|| |latest|  |
++-----------+-----------+
+||downloads||           |
++-----------+-----------+
+
+
 .. contents:: :local:
 
 Benefits
@@ -58,7 +96,7 @@ Usage
 
 Your application needs to configure three custom views
 
-* ``launch_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user.
+* ``launch_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user. ``launch_ipython()`` takes in Notebook context parameters (see below), starts a new Notebook kernel if needed and then redirects user to Notebook itself.
 
 * ``shutdown_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.shutdown_notebook()`` to force close a notebook for a user.
 
@@ -69,18 +107,31 @@ For complete examples see the demo application.
 Pyramid configuration parameters
 --------------------------------
 
+*python_notebook* reads following parameters from your Pyramid INI configuration file::
+
+    # Where we store IPython Notebook runtime and persistent files
+    # (pid, saved notebooks, etc.).
+    # Each user will get a personal subfolder in this folder
+    pyramid_notebook.notebook_folder = /tmp/pyramid_notebook
+
+    # Automatically shutdown IPython Notebook kernel
+    # after his many seconds have elapsed since startup
+    pyramid_notebook.kill_timeout = 3600
 
 
 Notebook context parameters
 ---------------------------
 
-Notebook processes are customized by the following parameters. Some are filled in by the framework, some of those you can set yourself.
+Opened Notebooks can be context sensitive with the following parameters. Some are filled in by the framework, some of those you can set yourself.
 
-* To have custom context variables change *startup* script
+* You pass in your Notebook context parameters when you call ``launch_notebook()``.
+
+* To have custom context variables change *startup* script.
 
 * To have different info screen change *greeting* text
 
-::
+Example of what context information you can pass below::
+
     {
 
         # Extra Python script executed on notebook startup - this is saved as startup.py
@@ -155,6 +206,12 @@ Example how to start Notebook daemon manually::
 Architecture
 ============
 
+Each Pyramid user has a named Notebook process. Each Notebook process gets their own working folder, dynamically created upon the first lanch. Notebooks are managed by ``NotebookManager`` which detects changes in Notebook context and restarts the Notebook for the user with new context if needed.
+
+Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requestse to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks.
+
+Notebook needs both HTTP and WebSocket channels. Because Pyramid is not aware of Websockets, on a production set up (not localhost) you need to use a front end web server to take care of WebSocket proxying.
+
 ...
 
 Scalability
@@ -218,7 +275,7 @@ Development
 * `Documentation <https://bitbucket.org/miohtama/pyramid_notebook>`_
 
 Tests
-------
+-----
 
 .. note ::
 
