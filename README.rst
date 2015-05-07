@@ -1,6 +1,6 @@
 Embed IPython Notebook shell on your Pyramid web site.
 
-IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
+`IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
 
 .. |docs| image:: https://readthedocs.org/projects/cryptoassetscore/badge/?version=latest
     :target: http://cryptoassetscore.readthedocs.org/en/latest/
@@ -62,20 +62,28 @@ Prerequisites
 
 * Python 3.3+
 
+* OSX, Linux
+
 Demo
 ====
 
-* Checkout repository
+* Checkout source code repository::
 
-* Install deps and package::
+    git clone https://miohtama@bitbucket.org/miohtama/pyramid_notebook.git
 
+* Create virtualenv for Python 3.3. Install deps and package::
+
+    cd pyramid_notebook
+    virtualenv --python=python3.4 venv
+    source venv/bin/activate
+    pip install requirements.txt
     python setup.py develop
 
 * Run demo::
 
     pserve demo/development.ini
 
-Visit at `http://localhost:9000 <http://localhost:9000>`_.
+Visit at `http://localhost:9999 <http://localhost:9999>`_.
 
 Try accounts is *user* / *password* and *user2* / *password*
 
@@ -215,7 +223,7 @@ Scalability
 
 The tool is intended for team internal use only. The default settings limit the number of users who can create and access notebooks to 10 people.
 
-Currently a new daemon process is launched for each user in non-scalable manner. If 100+ users scalability is required there exist several ways to make the tool more lightwweight.
+Currently a new daemon process is launched for each user in non-scalable manner. If 100+ users scalability is required there exist several ways to make the tool more lightweight.
 
 Security
 ========
@@ -259,7 +267,7 @@ Notebook process can be made to start inside Linux container. Thus, it would sti
 Two-factor authentication
 -------------------------
 
-Consider requiring your website admins to use two-factor authentication <http://en.wikipedia.org/wiki/Two_factor_authentication>`_ to protect against admin credential loss due to malware, keylogging and such nasties. Example two-factor library for Python <http://code.thejeshgn.com/pyg2fa>`_.
+Consider requiring your website admins to use `two-factor authentication <http://en.wikipedia.org/wiki/Two_factor_authentication>`_ to protect against admin credential loss due to malware, keylogging and such nasties. Example `two-factor library for Python <http://code.thejeshgn.com/pyg2fa>`_.
 
 Development
 ===========
