@@ -15,6 +15,7 @@ node_modules
 # splinter unnecessary output
 tests.*
 .coverage
+.coverage.*
 coverage.xml
 screenshots/*
 *.vpp~*

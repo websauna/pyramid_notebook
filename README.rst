@@ -99,7 +99,7 @@ Usage
 
 Your application needs to configure three custom views
 
-* ``launch_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user. ``launch_ipython()`` takes in Notebook context parameters (see below), starts a new Notebook kernel if needed and then redirects user to Notebook itself.
+* One or multiple ``launch_ipython()`` notebook launch points. This does authentication and authorization and calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user. ``launch_ipython()`` takes in Notebook context parameters (see below), starts a new Notebook kernel if needed and then redirects user to Notebook itself.
 
 * ``shutdown_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.shutdown_notebook()`` to force close a notebook for a user.
 
@@ -172,6 +172,11 @@ Example of what context information you can pass below::
         "context_hash",
     }
 
+
+Dead man switch
+---------------
+
+Launched Notebook processes have maximum life time after which they terminate themselves. Currently the termation is unconditional seconds since the start up, but in the future versions this is expected to change to a dead man switchs where the process only terminates itself if there has not been recent activity.
 
 Taking down loose notebooks
 ---------------------------

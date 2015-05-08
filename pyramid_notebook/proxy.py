@@ -2,7 +2,7 @@
 
 import http.client
 import logging
-from urllib.parse import urlparse, urlunsplit, urlunparse
+from urllib.parse import urlparse, urlunsplit, urlunparse, unquote_plus
 
 
 #: (:class:`frozenset`) The set of hop-by-hop headers.  All header names
@@ -101,11 +101,29 @@ class WSGIProxyApplication:
             return
 
         # Read in request body if it exists
-        body = None
+        body = length = None
         try:
             length = int(environ['CONTENT_LENGTH'])
         except (KeyError, ValueError):
-            pass
+
+            # This is a situation where client HTTP POST is missing content-length.
+            # This is also situation where (WebOb?) may screw up encoding and isert extranous = in the body.
+            # https://github.com/ipython/ipython/issues/8416
+            if environ["REQUEST_METHOD"] == "POST":
+                if environ.get("CONTENT_TYPE") == 'application/x-www-form-urlencoded; charset=UTF-8':
+                    body = environ['wsgi.input'].read()
+                    try:
+                        body = unquote_plus(body.decode("utf-8"))
+
+                        # Fix extra = at end of JSON payload
+                        if body.startswith("{") and body.endswith("}="):
+                            body = body[0:len(body)-1]
+
+                    except Exception as e:
+                        logger.exception(e)
+                        logger.error("Could not decode body: %s", body)
+
+                    length = len(body)
         else:
             body = environ['wsgi.input'].read(length)
 
@@ -135,6 +153,7 @@ class WSGIProxyApplication:
 
         # Make the remote request
         try:
+
             logger.debug('%s %s %r',
                          environ['REQUEST_METHOD'], path, headers)
             connection.request(environ['REQUEST_METHOD'], path,

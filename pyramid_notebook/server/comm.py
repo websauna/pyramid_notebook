@@ -8,6 +8,7 @@
 """
 import datetime
 import json
+import shutil
 import os
 import logging
 
@@ -62,6 +63,7 @@ def get_context(pid_file, daemon=False):
         try:
             data = json.loads(json_data)
         except ValueError as e:
+
             logger.error("Damaged context json data %s", json_data)
             return None
 
@@ -76,10 +78,17 @@ def get_context(pid_file, daemon=False):
 
 
 def clear_context(pid_file):
-    """Called at exit. Delete the context file to signal there is no active notebook."""
-    data = get_context(pid_file, daemon=True)
-    if "pid" in data:
-        del data["pid"]
-        # In the case we crashed set the terminated timestamp
-        data["terminated"] = str(datetime.datetime.now(datetime.timezone.utc))
+    """Called at exit. Delete the context file to signal there is no active notebook.
+
+    We don't delete the whole file, but leave it around for debugging purposes. Maybe later we want to pass some information back to the web site.
+    """
+    return
+    raise RuntimeError("Should not happen")
+    fname = get_context_file_name(pid_file)
+    shutil.move(fname, fname.replace("context.json", "context.old.json"))
+
+    data = {}
+    data["terminated"] = str(datetime.datetime.now(datetime.timezone.utc))
     set_context(pid_file, data)
+
+

@@ -28,8 +28,8 @@ def test_spawn():
 
     m.stop_notebook(USER)
     time.sleep(1)
-    status = m.get_notebook_status(USER)
-    assert status.get("pid") is None, "Still had pid in {}".format(m.get_pid(USER))
+    assert not m.is_running(USER)
+
 
 
 
@@ -61,7 +61,6 @@ def test_context_change():
 
     m.stop_notebook(USER)
     time.sleep(1)
-    status = m.get_notebook_status(USER)
-    assert status.get("pid") is None, "Still had content PID {}".format(m.get_pid(USER))
+    assert not m.is_running(USER)
 
 

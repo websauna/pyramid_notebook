@@ -119,6 +119,8 @@ class NotebookManager:
             context["websocket_url"] = "ws://localhost:{}".format(http_port)
 
         pid = self.get_pid(name)
+        assert not "terminated" in context
+
         comm.set_context(pid, context)
 
         if fg:
@@ -164,6 +166,8 @@ class NotebookManager:
             logger.info("Notebook context change detected for {}".format(name))
             if not self.is_same_context(context, last_context):
                 self.stop_notebook(name)
+                # Make sure we don't get race condition over context.json file
+                time.sleep(2.0)
             else:
                 return last_context, False
 

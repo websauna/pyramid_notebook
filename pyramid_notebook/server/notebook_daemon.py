@@ -59,18 +59,24 @@ def create_named_notebook(fname, context):
         writer.write(nb, f)
 
 
-
 def run_notebook(foreground=False):
 
-    # Get some debug output from IPython
-    # log_file = "ipython.log"
-    #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M', filename=log_file, filemode='w')
-
-    # logger = logging.getLogger(__name__)
     if not foreground:
-        # Make it possible to follow what daemonized IPython is doing
+        # Make it possible to get output what daemonized IPython is doing
         sys.stdout = io.open("notebook.stdout.log", "wt")
         sys.stderr = io.open("notebook.stderr.log", "wt")
+
+    try:
+        _run_notebook(foreground)
+    except:
+        import traceback
+        traceback.print_exc(file=sys.stderr)
+        raise
+
+
+def _run_notebook(foreground=False):
+
+    print("Starting notebook, daemon {}".format(not foreground), file=sys.stderr)
 
     # Set dead man's switch
     def kill_me(num, stack):
@@ -99,6 +105,12 @@ def run_notebook(foreground=False):
             # We cannot let daemons start up with context, because it keeps running, reverses port but would do all proxy setup wrong
             sys.exit("Daemonized process needs an explicit context.json file and could not read one from {}".format(os.path.dirname(pid_file)))
 
+        if "terminated" in context:
+            print("Invalid context file {}: {}".format(os.path.dirname(pid_file), context), file=sys.stderr)
+            sys.exit("Bad context - was by terminated notebook daemon")
+
+        print("Starting with context {}".format(context), file=sys.stderr)
+
     context["http_port"] = port
     context["pid"] = os.getpid()
     context["kill_timeout"] = kill_timeout
@@ -125,6 +137,7 @@ def run_notebook(foreground=False):
             websocket_url = context.get("websocket_url", "http://localhost:{}/".format(port))
             config.NotebookApp.websocket_url = websocket_url
 
+
         if "startup" in context:
             # Drop in custom startup script
             startup_folder = os.path.join(os.getcwd(), ".ipython/profile_default/startup/")
@@ -141,7 +154,7 @@ def run_notebook(foreground=False):
         sys.exit(str(e))
 
 
-def clear_context():
+def clear_context(*args):
     comm.clear_context(pid_file)
 
 
@@ -169,6 +182,12 @@ if __name__ == '__main__':
         atexit.register(clear_context)
         run_notebook(foreground=True)
     else:
-        daemon = NotebookDaemon(pidfile=pid_file, workdir=workdir, shutdown_callback=clear_context())
+
+        def shutdown(message, code):
+            print("shutdown {}: {}".format(message, code), file=sys.stderr)
+            sys.stderr.flush()
+            clear_context()
+
+        daemon = NotebookDaemon(pidfile=pid_file, workdir=workdir, shutdown_callback=shutdown)
         daemon.worker = run_notebook
         daemon.do_action(action)

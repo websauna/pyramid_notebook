@@ -14,6 +14,13 @@ logger = logging.getLogger(__name__)
 
 def proxy_it(request, port):
     """Proxy HTTP request to upstream IPython Notebook Tornado server."""
+
+    if request.method == "POST" and not request.headers.get("Content-length"):
+        # It is possible to get a POST request with content-length set by the browser. This happens with X-Requested-With:XMLHttpRequest when IPython Notebook does session POST call. The magic below forces us the read the whole request and makes the Content-length magically to appear for the upstream proxy which otherwise would get 400 Bad Request from Tornado. Furthermore to add to the insult this happened on the same computer on two different Pyramid installations which should have the same pindowns, so not sure what is triggering the actual problem.
+        # request.body  # touch body, make it to read it fully?
+        # assert request.headers.get("Content-length")
+        pass
+
     proxy_app = WSGIProxyApplication(port)
     return request.get_response(proxy_app)
 
@@ -58,13 +65,13 @@ def prepare_notebook_context(request, notebook_context):
     # Tell notebook to correctly address WebSockets allow origin policy
     notebook_context["allow_origin"] = request.host_url
     notebook_context["notebook_path"] = request.route_path("notebook_proxy", remainder="")
+
     # Record the hash of the current parameters, so we know if this user accesses the notebook in this or different context
     if "context_hash" not in notebook_context:
         notebook_context["context_hash"] = make_dict_hash(notebook_context)
 
-    # Tell notebook to correctly address WebSockets allow origin policy
-    notebook_context["allow_origin"] = request.host_url
-    notebook_context["notebook_path"] = request.route_path("notebook_proxy", remainder="")
+
+    print(notebook_context)
 
 
 def launch_on_demand(request, username, notebook_context):
@@ -110,7 +117,7 @@ def launch_on_demand(request, username, notebook_context):
 
 
     manager = NotebookManager(notebook_folder, kill_timeout=kill_timeout)
-    notebook_info, created  = manager.start_notebook_on_demand(username, notebook_context)
+    notebook_info, created = manager.start_notebook_on_demand(username, notebook_context)
     return notebook_info
 
 
@@ -128,6 +135,9 @@ def notebook_proxy(request, username):
 
     if not notebook_info:
         raise HTTPInternalServerError("Apparently IPython Notebook daemon process is not running for {}".format(username))
+
+    if not "http_port" in notebook_info:
+        raise RuntimeError("Notebook terminated prematurely before managed to tell us its HTTP port")
 
     return proxy_it(request, notebook_info["http_port"])
 
