@@ -58,7 +58,8 @@ def shell1(request):
         raise httpexceptions.HTTPForbidden("You need to be logged in. Hint: user / password")
 
     notebook_context = {"greeting": "**Executing shell1 context**\n"}
-    startup.make_startup(notebook_context)
+    config_file = request.registry.settings["global_config"]["__file__"]
+    startup.make_startup(notebook_context, config_file)
 
     return launch_notebook(request, username, notebook_context=notebook_context)
 
@@ -75,7 +76,8 @@ def shell2(request):
         raise httpexceptions.HTTPForbidden("You need to be logged in. Hint: user / password")
 
     notebook_context = {"greeting": "**Executing shell2 context**\n"}
-    startup.make_startup(notebook_context)
+    config_file = request.registry.settings["global_config"]["__file__"]
+    startup.make_startup(notebook_context, config_file)
     startup.add_script(notebook_context, SCRIPT)
     startup.add_greeting(notebook_context, GREETING)
 

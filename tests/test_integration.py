@@ -47,7 +47,12 @@ def hacker_typing(browser, spinter_selection, code):
     # Tyoe int he code
     a = ActionChains(driver)
     a.send_keys(code)
-    a.key_down(Keys.ALT).send_keys(Keys.ENTER).key_up(Keys.ALT)
+    a.perform()
+    time.sleep(1.0)
+
+    # Execute the text we just typed
+    a = ActionChains(driver)
+    a.key_down(Keys.SHIFT).send_keys(Keys.ENTER).key_up(Keys.SHIFT)
     a.perform()
 
 
@@ -64,8 +69,7 @@ def test_add_context_variables(web_server, browser):
     hacker_typing(b, b.find_by_css(".code_cell"), 'print("Output of a + b is", a + b)')
 
     # spin, spin, spin my little AJAX spinner
-    time.sleep(1.5)
-
+    time.sleep(0.5)
     assert b.is_text_present("Output of a + b is foobar")
 
     # Back to the home

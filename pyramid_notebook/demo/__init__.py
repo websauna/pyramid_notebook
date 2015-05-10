@@ -16,6 +16,8 @@ def mycheck(username, password, request):
 
 
 def main(global_config, **settings):
+
+    settings["global_config"] = global_config
     config = Configurator(settings=settings)
 
     # Jinja 2 templates as .html files

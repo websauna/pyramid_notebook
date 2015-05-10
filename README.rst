@@ -178,39 +178,6 @@ Dead man switch
 
 Launched Notebook processes have maximum life time after which they terminate themselves. Currently the termation is unconditional seconds since the start up, but in the future versions this is expected to change to a dead man switchs where the process only terminates itself if there has not been recent activity.
 
-Taking down loose notebooks
----------------------------
-
-In the case the notebook daemon processes get stuck, e.g. by user starting a infinite loop and do not terminate properly, you can take them down.
-
-* Any time you launch a notebook with different context (different parameters) for the user, the prior notebook process gets terminated forcefully
-
-* You can manually terminate all notebook processes. Ex::
-
-    pkill -f notebook_daemon.py
-
-Crashing Notebooks
-------------------
-
-The following are indication of crashed Notebook process.
-The following page on Notebook when you try try to start Notebook through web:
-
-    Apparently IPython Notebook daemon process is not running for user
-
-... or the IPython Notebook dialog *Connecting failed* and connecting to kernel does not work.
-
-Notebook has most likely died because of Python exception. There exists a file ``notebook.stderr.log``, one per each user, where you should be able to read traceback what happened.
-
-Debugging Notebook daemon
--------------------------
-
-The notebook daemon can be started from a command line and supports normal UNIX daemon ``start``, ``stop`` and ``fg`` commands. You need to give mandatory pid file, working folder, HTTP port and kill timeout arguments.
-
-Example how to start Notebook daemon manually::
-
-    python $SOMEWHERE/pyramid_notebook/server/notebook_daemon.py fg /tmp/pyramid_notebook/$USER/notebook.pid /tmp/pyramid_notebook/$USER 8899 3600
-
-
 Architecture
 ============
 
@@ -285,6 +252,53 @@ Two-factor authentication
 -------------------------
 
 Consider requiring your website admins to use `two-factor authentication <http://en.wikipedia.org/wiki/Two_factor_authentication>`_ to protect against admin credential loss due to malware, keylogging and such nasties. Example `two-factor library for Python <http://code.thejeshgn.com/pyg2fa>`_.
+
+Troubleshooting
+===============
+
+Taking down loose notebooks
+---------------------------
+
+In the case the notebook daemon processes get stuck, e.g. by user starting a infinite loop and do not terminate properly, you can take them down.
+
+* Any time you launch a notebook with different context (different parameters) for the user, the prior notebook process gets terminated forcefully
+
+* You can manually terminate all notebook processes. Ex::
+
+    pkill -f notebook_daemon.py
+
+Crashing Notebooks
+------------------
+
+The following are indication of crashed Notebook process.
+The following page on Notebook when you try try to start Notebook through web:
+
+    Apparently IPython Notebook daemon process is not running for user
+
+... or the IPython Notebook dialog *Connecting failed* and connecting to kernel does not work.
+
+Notebook has most likely died because of Python exception. There exists a file ``notebook.stderr.log``, one per each user, where you should be able to read traceback what happened.
+
+Debugging Notebook daemon
+-------------------------
+
+The notebook daemon can be started from a command line and supports normal UNIX daemon ``start``, ``stop`` and ``fg`` commands. You need to give mandatory pid file, working folder, HTTP port and kill timeout arguments.
+
+Example how to start Notebook daemon manually::
+
+    python $SOMEWHERE/pyramid_notebook/server/notebook_daemon.py fg /tmp/pyramid_notebook/$USER/notebook.pid /tmp/pyramid_notebook/$USER 8899 3600
+
+
+Seeing startup script exceptions
+--------------------------------
+
+If the startup script does not populate your Notebook with default variables as you hope, you can always do
+
+* ``print(locals())`` to see what local variables are set
+
+* ``print(gocals())`` to see what global variables are set
+
+* Manually execute startup script inside IPython Notebook, e.g. ``exec(open("/private/tmp/pyramid_notebook/user-1/.ipython/profile_default/startup/startup.py").read())``
 
 Development
 ===========

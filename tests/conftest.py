@@ -30,7 +30,7 @@ def ini_settings(request):
     setup_logging(config_uri)
     config = get_appsettings(config_uri)
 
-    return config
+    return config_uri, config
 
 
 
@@ -82,7 +82,8 @@ def web_server(request, ini_settings):
 
     from pyramid_notebook import demo
 
-    app = demo.main({}, **ini_settings)
+    config_uri, settings = ini_settings
+    app = demo.main({"__file__": config_uri}, **settings)
 
     port = 8777
 
