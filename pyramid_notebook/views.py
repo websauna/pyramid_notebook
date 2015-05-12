@@ -2,6 +2,7 @@ import logging
 import os
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPInternalServerError
+from pyramid.util import DottedNameResolver
 
 from pyramid_notebook.notebookmanager import NotebookManager
 from pyramid_notebook.proxy import WSGIProxyApplication
@@ -11,15 +12,28 @@ from pyramid_notebook.utils import make_dict_hash
 logger = logging.getLogger(__name__)
 
 
+def get_notebook_manager(request):
+    settings = request.registry.settings
+    notebook_folder = settings["pyramid_notebook.notebook_folder"]
+    manager = NotebookManager(notebook_folder)
+    return manager
+
 
 def proxy_it(request, port):
     """Proxy HTTP request to upstream IPython Notebook Tornado server."""
 
-    if request.method == "POST" and not request.headers.get("Content-length"):
-        # It is possible to get a POST request with content-length set by the browser. This happens with X-Requested-With:XMLHttpRequest when IPython Notebook does session POST call. The magic below forces us the read the whole request and makes the Content-length magically to appear for the upstream proxy which otherwise would get 400 Bad Request from Tornado. Furthermore to add to the insult this happened on the same computer on two different Pyramid installations which should have the same pindowns, so not sure what is triggering the actual problem.
-        # request.body  # touch body, make it to read it fully?
-        # assert request.headers.get("Content-length")
-        pass
+    # Check if we have websocket proxy configured
+    websocket_proxy = request.registry.settings.get("pyramid_notebook.websocket_proxy", "")
+    if websocket_proxy.strip():
+        r = DottedNameResolver()
+        websocket_proxy = r.maybe_resolve(websocket_proxy)
+
+    if request.headers.get("connection", "").lower() == "upgrade":
+        if websocket_proxy:
+            return websocket_proxy(request, port)
+        else:
+            # If we run on localhost on pserve, we should never hit here as requests go directly to IPython Notebook kernel, not us
+            raise RuntimeError("Websocket proxy support is not configured.")
 
     proxy_app = WSGIProxyApplication(port)
     return request.get_response(proxy_app)
@@ -112,10 +126,16 @@ def launch_on_demand(request, username, notebook_context):
     prepare_notebook_context(request, notebook_context)
 
     # Configure websockets
-    websocket_url = settings.get("pyramid_notebook.websocket_url")
-    assert websocket_url, "pyramid_notebook.websocket_url setting missing"
-    assert websocket_url.startswith("ws:/") or websocket_url.startswith("wss:/")
-    notebook_context["websocket_url"] = websocket_url
+    # websocket_url = settings.get("pyramid_notebook.websocket_url")
+    # assert websocket_url, "pyramid_notebook.websocket_url setting missing"
+    #assert websocket_url.startswith("ws:/") or websocket_url.startswith("wss:/")
+
+    if request.registry.settings.get("pyramid_notebook.websocket_proxy", ""):
+        websocket_url = request.host_url.replace("http://", "ws://").replace("https://", "wss://")
+        notebook_context["websocket_url"] = websocket_url
+    else:
+        # Connect websockets directly to localhost notebook server, do not try to proxy them
+        websocket_url =  "ws://localhost:{port}/notebook/"
 
     # Record the hash of the current parameters, so we know if this user accesses the notebook in this or different context
     if "context_hash" not in notebook_context:
@@ -134,8 +154,7 @@ def notebook_proxy(request, username):
     security_check(request, username)
 
     settings = request.registry.settings
-    notebook_folder = settings["pyramid_notebook.notebook_folder"]
-    manager = NotebookManager(notebook_folder)
+    manager = get_notebook_manager(request)
     notebook_info = manager.get_context(username)
 
     if not notebook_info:
@@ -164,8 +183,6 @@ def launch_notebook(request, username, notebook_context):
 def shutdown_notebook(request, username):
     """Stop any running notebook for a user."""
 
-    settings = request.registry.settings
-    notebook_folder = settings["pyramid_notebook.notebook_folder"]
-    manager = NotebookManager(notebook_folder)
+    manager = get_notebook_manager(request)
     if manager.is_running(username):
         manager.stop_notebook(username)

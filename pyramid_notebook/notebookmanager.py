@@ -20,7 +20,7 @@ class NotebookManager:
     * Pass extra parameters to IPython Nobetook
     """
 
-    def __init__(self, notebook_folder, min_port=40000, port_range=10, kill_timeout=50, python=sys.executable):
+    def __init__(self, notebook_folder, min_port=40000, port_range=10, kill_timeout=50, python=None):
         """
         :param notebook_folder: A folder containing a subfolder for each named IPython Notebook. The subfolder contains pid file, log file, default.ipynb and profile files.
         """
@@ -28,11 +28,25 @@ class NotebookManager:
         self.port_range = port_range
         self.notebook_folder = notebook_folder
         self.kill_timeout = kill_timeout
-        self.python = python
+
+        if python:
+            self.python = python
+        else:
+            self.python = self.discover_python()
 
         os.makedirs(notebook_folder, exist_ok=True)
 
         self.cmd = self.get_manager_cmd()
+
+    def discover_python(self):
+        """Get the Python interpreter we need to use to run our Notebook daemon."""
+        python = sys.executable
+
+        #: XXX fix this hack, uwsgi sets itself as Python
+        #: Make better used Python interpreter autodiscovery
+        if python.endswith("/uwsgi"):
+            python = python.replace("/uwsgi", "/python")
+        return python
 
     def get_work_folder(self, name):
         work_folder = os.path.join(self.notebook_folder, name)
@@ -85,7 +99,7 @@ class NotebookManager:
             logger.error("STDOUT: %s", stdout)
             logger.error("STDERR: %s", stderr)
 
-            raise RuntimeError("Could not execute notebook command. Exit code: {} cmd: {}".format(p.returncode, cmd))
+            raise RuntimeError("Could not execute notebook command. Exit code: {} cmd: {}".format(p.returncode, " ".join(cmd)))
 
         return stdout
 
@@ -116,7 +130,7 @@ class NotebookManager:
 
         # We can't proxy websocket URLs, so let them go directly through localhost or have front end server to do proxying (nginx)
         if not "websocket_url" in context:
-            context["websocket_url"] = "ws://localhost:{port}".format(http_port)
+            context["websocket_url"] = "ws://localhost:{port}".format(port=http_port)
 
         if "{port}" in context["websocket_url"]:
             # Do port substituion for the websocket URL

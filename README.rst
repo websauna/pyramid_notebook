@@ -354,6 +354,9 @@ Run full test coverage::
 
     py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
+Running UWSGI server with websockets::
+
+    uwsgi --virtualenv=venv --wsgi-file=pyramid_notebook/demo/wsgi.py --pythonpath=venv/bin/python uwsgi.ini
 
 Related work
 ------------
