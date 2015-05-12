@@ -62,7 +62,6 @@ class ProxyClient(WebSocketBaseClient):
         self.run()
 
     def terminate(self):
-        raise RuntimeError("NO!")
         super(ProxyClient, self).terminate()
 
     def run(self):
