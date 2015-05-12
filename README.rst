@@ -118,9 +118,9 @@ The following is an example how to construct ``admin_shell`` view which launches
 
 For another approach on these views, please see the demo source code.
 
- views.py:
+``views.py``:
 
- .. code-block:: python
+.. code-block:: python
 
     from pyramid.httpexceptions import HTTPFound
     from pyramid.view import view_config
@@ -176,7 +176,7 @@ For another approach on these views, please see the demo source code.
         _shutdown_notebook(request, request.user.username)
         return HTTPFound(request.route_url("home"))
 
-We also need to capture the INI settings file on the server start up, so that we can pass it forward to IPython Notebook process. In __init__.py:
+We also need to capture the INI settings file on the server start up, so that we can pass it forward to IPython Notebook process. In ``__init__.py``:
 
 .. code-block:: python
 
@@ -335,11 +335,9 @@ Also you need to enable websockets in your uWSGI settings::
 Architecture
 ============
 
-Each Pyramid user has a named Notebook process. Each Notebook process gets their own working folder, dynamically created upon the first lanch. Notebooks are managed by ``NotebookManager`` which detects changes in Notebook context and restarts the Notebook for the user with new context if needed.
+Each Pyramid user has a named Notebook process. Each Notebook process gets their own working folder, dynamically created upon the first lanch. Notebooks are managed by ``NotebookManager`` class which detects changes in notebook context and restarts the Notebook process for the user with a new context if needed.
 
-Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requests to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks.
-
-Notebook needs both HTTP and WebSocket channels. Because Pyramid is not aware of Websockets, on a production set up (not localhost) you need to use a front end web server to take care of WebSocket proxying.
+Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requests to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks. The proxy view is also responsible for starting a web server specific websocket proxy loop.
 
 Launched Notebook processes are daemonized and separated from the web server process. The communication between the web server and the daemon process happens through command line, PID file and context file (JSON dump of notebook context parameters, as described above).
 
