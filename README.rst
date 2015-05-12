@@ -1,4 +1,4 @@
-Embed IPython Notebook shell on your Pyramid web site.
+Embed IPython Notebook shell on your Pyramid web site and start through-the-browser Python shell with a single click.
 
 `IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
 
