@@ -44,7 +44,7 @@ Benefits
 
 * Automatic data sources: Populate Notebook with variables and data depending where the user clicks the shell open.
 
-* Authentication integration: use the same credentials as you use for the site administration.
+* Authentication integration: use the same credentials as you use for the site administration. Each Pyramid user gets his/her own IPython Notebook process.
 
 Use cases
 ---------
@@ -64,6 +64,8 @@ Prerequisites
 
 * OSX, Linux
 
+* uWSGI (on production server only)
+
 Demo
 ====
 
@@ -71,7 +73,7 @@ Demo
 
     git clone https://miohtama@bitbucket.org/miohtama/pyramid_notebook.git
 
-* Create virtualenv for Python 3.3. Install deps and package::
+* Create virtualenv for Python 3.4. Install dependencies::
 
     cd pyramid_notebook
     virtualenv --python=python3.4 venv
@@ -81,11 +83,11 @@ Demo
 
 * Run demo::
 
-    pserve demo/development.ini
+    pserve pyramid_notebook/demo/development.ini
 
-Visit at `http://localhost:9999 <http://localhost:9999>`_.
+Then point your browser at `http://localhost:9999 <http://localhost:9999>`_.
 
-Try accounts is *user* / *password* and *user2* / *password*
+Try accounts is *user* / *password*, and *user2* / *password* respectively.
 
 Installation
 ============
@@ -94,21 +96,136 @@ It is recommend to install using ``pip`` and ``virtualenv``. `Python guide for p
 
     pip install pyramid_notebook
 
+On production server where you use uWSGI websocket support::
+
+    pip install pyramid_notebook[uwsgi]
+
 Usage
 =====
 
-Your application needs to configure three custom views
+Your application needs to configure three custom views.
 
-* One or multiple ``launch_ipython()`` notebook launch points. This does authentication and authorization and calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user. ``launch_ipython()`` takes in Notebook context parameters (see below), starts a new Notebook kernel if needed and then redirects user to Notebook itself.
+* One or multiple ``launch_ipython()`` notebook launch points. This does user authentication and authorization and then calls ``pyramid_notebook.views.launch_notebook()`` to open a new Notebook for a user. ``launch_ipython()`` takes in Notebook context parameters (see below), starts a new Notebook kernel if needed and then redirects user to Notebook itself.
 
 * ``shutdown_ipython()`` which does authentication and authorization and calls ``pyramid_notebook.views.shutdown_notebook()`` to force close a notebook for a user.
 
 * ``notebook_proxy()`` which does authentication and authorization and calls ``pyramid_notebook.views.notebook_proxy()`` to proxy HTTP request to upstream IPython Notebook server bind to a localhost port. `notebook_proxy` is mapped to `/notebook/` path in your site URL. Both your site and Notebook upstream server should agree on this location.
 
-For complete examples see the demo application.
+Example code
+------------
 
-Pyramid configuration parameters
---------------------------------
+The following is an example how to construct ``admin_shell`` view which launches a Notebook for the currently logged in Pyramid user when the view is visited for the first time. For extra security the permission for the notebook view cannot be assigned through normal groups, but the username must be on the whitelist in the INI settings file. This guarantees the shell is initially accessible only by persons who have shell access to the server itself.
+
+For another approach on these views, please see the demo source code.
+
+ views.py:
+
+ .. code-block:: python
+
+    from pyramid.httpexceptions import HTTPFound
+    from pyramid.view import view_config
+    from pyramid_notebook import startup
+    from pyramid_notebook.views import launch_notebook
+    from pyramid_notebook.views import shutdown_notebook as _shutdown_notebook
+    from pyramid_notebook.views import notebook_proxy as _notebook_proxy
+    from pyramid_web20.models import Base
+
+
+    #: Include our database session in notebook so it is easy to query stuff right away from the prompt
+    SCRIPT = """
+    from pyramid_web20.models import DBSession as session
+    """
+
+
+    GREETING="""
+    * **session** - SQLAlchemy database session
+    """
+
+
+    @view_config(route_name="notebook_proxy", permission="shell")
+    def notebook_proxy(request):
+        """Proxy IPython Notebook requests to the upstream server."""
+        return _notebook_proxy(request, request.user.username)
+
+
+    @view_config(route_name="admin_shell", permission="shell")
+    def admin_shell(request):
+        """Open admin shell with default parameters for the user."""
+        # Make sure we have a logged in user
+        nb = {}
+
+        # Pass around the Pyramid configuration we used to start this application
+        global_config = request.registry.settings["pyramid_web20.global_config"]
+
+        # Get the reference to our Pyramid app config file and generate Notebook
+        # bootstrap startup.py script for this application
+        config_file = global_config["__file__"]
+        startup.make_startup(nb, config_file)
+        startup.add_script(nb, SCRIPT)
+        startup.add_greeting(nb, GREETING)
+
+        #: Include all our SQLAlchemy models in the notebook variables
+        startup.include_sqlalchemy_models(nb, Base)
+
+        return launch_notebook(request, request.user.username, notebook_context=nb)
+
+
+    @view_config(route_name="shutdown_notebook", permission="shell")
+    def shutdown_notebook(request):
+        """Shutdown the notebook of the current user."""
+        _shutdown_notebook(request, request.user.username)
+        return HTTPFound(request.route_url("home"))
+
+We also need to capture the INI settings file on the server start up, so that we can pass it forward to IPython Notebook process. In __init__.py:
+
+.. code-block:: python
+
+    def main(global_config, **settings):
+        settings["pyramid_web20.global_config"] = global_config
+
+Then we have a custom principals handler granting the ``shell`` permission for users read from the user whitelist in the configuration file:
+
+.. code-block:: python
+
+    def find_groups(userid, request):
+        """Get applied groups and other for the user"""
+
+        from horus.interfaces import IUserClass
+        user_class = request.registry.queryUtility(IUserClass)
+
+        # Read superuser names from the config
+        superusers = aslist(request.registry.settings.get("pyramid_web20.superusers"))
+
+        user = models.DBSession.query(user_class).get(userid)
+        if user:
+            if user.can_login():
+                principals = ['group:{}'.format(g.name) for g in user.groups]
+
+            # Allow superuser permission
+            if user.username in superusers or user.email in superusers:
+                principals.append("superuser:superuser")
+
+            return principals
+
+        # User not found, user disabled
+        return None
+
+We refer to ``superuser:super`` in Pyramid site root object::
+
+    class Root:
+
+        __acl__ = [
+            ...
+            (Allow, "superuser:superuser", 'shell'),
+        ]
+
+And here is the configuration file bit::
+
+    pyramid_web20.superusers =
+        mikko@example.com
+
+Pyramid settings
+----------------
 
 *python_notebook* reads following parameters from your Pyramid INI configuration file::
 
@@ -121,16 +238,19 @@ Pyramid configuration parameters
     # after his many seconds have elapsed since startup
     pyramid_notebook.kill_timeout = 3600
 
-    # Port range where IPython Notebook binds localhost for a HTTP/websocket connection.
-    # By default this is TCP/IP ports localhost:40000 - localhost:40010.
-    # In production, you need to proxy these from your front end web server
-    # using websocket proxying (see example below).
-    pyramid_notebook.websocket_base = 40000
+    # Websocket proxy launch function.
+    # This is a view function that upgrades the current HTTP request to Websocket (101 upgrade protocol)
+    # and starts the web server websocket proxy loop. Currently only uWSGI supported
+    # (see below).
+    pyramid_notebook.websocket_proxy =
+
+    # For uWSGI in production
+    # pyramid_notebook.websocket_proxy = pyramid_notebook.uwsgi.serve_websocket
 
 Notebook context parameters
 ---------------------------
 
-Opened Notebooks can be context sensitive with the following parameters. Some are filled in by the framework, some of those you can set yourself.
+Notebooks can be opened with context sensitive parameters. Some are filled in by the framework, some of those you can set yourself.
 
 * You pass in your Notebook context parameters when you call ``launch_notebook()``.
 
@@ -183,12 +303,33 @@ Dead man switch
 
 Launched Notebook processes have maximum life time after which they terminate themselves. Currently the termation is unconditional seconds since the start up, but in the future versions this is expected to change to a dead man switchs where the process only terminates itself if there has not been recent activity.
 
+Websocket proxying
+------------------
+
+IPython Notebook needs two different kind of connections to function properly
+
+* HTTP connection for loading the pages, assets
+
+* Websocket for real-time communication with Notebook kernel
+
+When you run Pyramid's ``pserve`` development server on your local machine and enter the Notebook shell, the websocket connection is made directly to IPython Notebook port bound localhost. This is because ``pserve`` does not have any kind of support for websockets. This behavior is controlled by ``pyramid_notebook.websocket_proxy`` setting.
+
+On the production server, you usually run a web server which spawns processes to execute WSGI requests, the Python standard for hosting web applications. Unfortunately, like WSGI for HTTP, there doesn't exist a standard for doing websocket requests in a Python application. Thus, one has to add support for websockets for each web server separately. Currently *pyramid_notebook* supports the following web servers
+
+ * `uWSGI <https://uwsgi-docs.readthedocs.org/en/latest/>`_
+
+It is ok to have another web server at the front of uWSGI, like Nginx, as these web servers can usually do proxy pass for websocket connections.
+
+To turn on websocket support on your uWSGI production server add following to your production INI settings::
+
+    pyramid_notebook.websocket_proxy = pyramid_notebook.uwsgi.serve_websocket
+
 Architecture
 ============
 
 Each Pyramid user has a named Notebook process. Each Notebook process gets their own working folder, dynamically created upon the first lanch. Notebooks are managed by ``NotebookManager`` which detects changes in Notebook context and restarts the Notebook for the user with new context if needed.
 
-Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requestse to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks.
+Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requests to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks.
 
 Notebook needs both HTTP and WebSocket channels. Because Pyramid is not aware of Websockets, on a production set up (not localhost) you need to use a front end web server to take care of WebSocket proxying.
 
@@ -203,8 +344,7 @@ Local deployment
 Production deployment
 ---------------------
 
-.. image :: docs/localhost_deployment.png
-
+.. image :: docs/production_deployment.png
 
 
 Scalability
@@ -228,7 +368,7 @@ With great power comes great responsibility.
 Below are some security matters you should consider.
 
 HTTPS only
-------------------------------
+----------
 
 *pyramid_notebook* accepts HTTPS connections only. HTTP connections are unencrypted and leaking information over HTTP could lead severe compromises.
 
@@ -257,27 +397,6 @@ Two-factor authentication
 -------------------------
 
 Consider requiring your website admins to use `two-factor authentication <http://en.wikipedia.org/wiki/Two_factor_authentication>`_ to protect against admin credential loss due to malware, keylogging and such nasties. Example `two-factor library for Python <http://code.thejeshgn.com/pyg2fa>`_.
-
-Nginx Websocket proxy security
-------------------------------
-
-The current receipt of using Nginx websocket proxying here is naive: it does not perform Pyramid authentication for websockets communications. However, what it does is that it limits available requests to IPython ``channels`` endpoint only.
-
-* The URLs server here look like: ``http://localhost:8080/api/kernels/2d409b3d-2655-4590-afe6-b37cb6e92622/channels?session_id=3E8D268493B647B983A6B3500489371``
-
-* The URL routing is declared here: https://github.com/ipython/ipython/blob/3.x/IPython/html/services/kernels/handlers.py#L287
-
-* This endpoint is limited to *Can "Upgrade" only to "WebSocket".* requests - all other HTTP requests will get this error message.
-
-*
-
-* The request handler checks that this endpoint has only (IPython) authenticated users only: https://github.com/ipython/ipython/blob/3.x/IPython/html/base/zmqhandlers.py#L217
-
-The future versions will replace Nginx proxying receipt with either
-
-* Mini websocket proxy server which also performs Pyramid authentication and does mapping to a correct localhost port/process automatically
-
-* The whole architecture is built around single IPython Notebook port and process concept, using IPython Notebook profiles instead of processes for user separation
 
 Troubleshooting
 ===============
@@ -354,9 +473,14 @@ Run full test coverage::
 
     py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
-Running UWSGI server with websockets::
+Running uWSGI server with websockets::
 
     uwsgi --virtualenv=venv --wsgi-file=pyramid_notebook/demo/wsgi.py --pythonpath=venv/bin/python uwsgi.ini
+
+Running uWSGI under Nginx for manual websocket proxy testing (OSX)::
+
+    pkill nginx ; nginx -c `pwd`/nginx.conf
+    uwsgi --virtualenv=venv --wsgi-file=pyramid_notebook/demo/wsgi.py --pythonpath=venv/bin/python uwsgi-under-nginx.ini
 
 Related work
 ------------
