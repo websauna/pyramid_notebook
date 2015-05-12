@@ -80,7 +80,7 @@ setup(
         'test': ['codecov', 'pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov"],
         'uwsgi': ['uwsgi', 'PasteDeploy', 'ws4py']
     },
-c
+
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
