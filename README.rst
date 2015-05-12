@@ -320,9 +320,17 @@ On the production server, you usually run a web server which spawns processes to
 
 It is ok to have another web server at the front of uWSGI, like Nginx, as these web servers can usually do proxy pass for websocket connections.
 
+uWSGI
+~~~~~
+
 To turn on websocket support on your uWSGI production server add following to your production INI settings::
 
     pyramid_notebook.websocket_proxy = pyramid_notebook.uwsgi.serve_websocket
+
+Also you need to enable websockets in your uWSGI settings::
+
+    http-websockets = true
+
 
 Architecture
 ============
