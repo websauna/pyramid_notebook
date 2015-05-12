@@ -116,7 +116,11 @@ class NotebookManager:
 
         # We can't proxy websocket URLs, so let them go directly through localhost or have front end server to do proxying (nginx)
         if not "websocket_url" in context:
-            context["websocket_url"] = "ws://localhost:{}".format(http_port)
+            context["websocket_url"] = "ws://localhost:{port}".format(http_port)
+
+        if "{port}" in context["websocket_url"]:
+            # Do port substituion for the websocket URL
+             context["websocket_url"] =  context["websocket_url"].format(port=http_port)
 
         pid = self.get_pid(name)
         assert not "terminated" in context

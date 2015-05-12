@@ -111,13 +111,18 @@ def launch_on_demand(request, username, notebook_context):
 
     prepare_notebook_context(request, notebook_context)
 
+    # Configure websockets
+    websocket_url = settings.get("pyramid_notebook.websocket_url")
+    assert websocket_url, "pyramid_notebook.websocket_url setting missing"
+    assert websocket_url.startswith("ws:/") or websocket_url.startswith("wss:/")
+    notebook_context["websocket_url"] = websocket_url
+
     # Record the hash of the current parameters, so we know if this user accesses the notebook in this or different context
     if "context_hash" not in notebook_context:
         notebook_context["context_hash"] = make_dict_hash(notebook_context)
 
-
     manager = NotebookManager(notebook_folder, kill_timeout=kill_timeout)
-    notebook_info, created = manager.start_notebook_on_demand(username, notebook_context)
+    notebook_info, creates = manager.start_notebook_on_demand(username, notebook_context)
     return notebook_info
 
 

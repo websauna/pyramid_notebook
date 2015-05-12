@@ -121,6 +121,11 @@ Pyramid configuration parameters
     # after his many seconds have elapsed since startup
     pyramid_notebook.kill_timeout = 3600
 
+    # Port range where IPython Notebook binds localhost for a HTTP/websocket connection.
+    # By default this is TCP/IP ports localhost:40000 - localhost:40010.
+    # In production, you need to proxy these from your front end web server
+    # using websocket proxying (see example below).
+    pyramid_notebook.websocket_base = 40000
 
 Notebook context parameters
 ---------------------------
@@ -207,7 +212,7 @@ Scalability
 
 The tool is intended for team internal use only. The default settings limit the number of users who can create and access notebooks to 10 people.
 
-Currently a new daemon process is launched for each user in non-scalable manner. If 100+ users scalability is required there exist several ways to make the tool more lightweight.
+Currently a new daemon process is launched for each user in non-scalable manner. If 100+ users scalability is required there exist seveal ways to make the tool more lightweight.
 
 Security
 ========
@@ -252,6 +257,27 @@ Two-factor authentication
 -------------------------
 
 Consider requiring your website admins to use `two-factor authentication <http://en.wikipedia.org/wiki/Two_factor_authentication>`_ to protect against admin credential loss due to malware, keylogging and such nasties. Example `two-factor library for Python <http://code.thejeshgn.com/pyg2fa>`_.
+
+Nginx Websocket proxy security
+------------------------------
+
+The current receipt of using Nginx websocket proxying here is naive: it does not perform Pyramid authentication for websockets communications. However, what it does is that it limits available requests to IPython ``channels`` endpoint only.
+
+* The URLs server here look like: ``http://localhost:8080/api/kernels/2d409b3d-2655-4590-afe6-b37cb6e92622/channels?session_id=3E8D268493B647B983A6B3500489371``
+
+* The URL routing is declared here: https://github.com/ipython/ipython/blob/3.x/IPython/html/services/kernels/handlers.py#L287
+
+* This endpoint is limited to *Can "Upgrade" only to "WebSocket".* requests - all other HTTP requests will get this error message.
+
+*
+
+* The request handler checks that this endpoint has only (IPython) authenticated users only: https://github.com/ipython/ipython/blob/3.x/IPython/html/base/zmqhandlers.py#L217
+
+The future versions will replace Nginx proxying receipt with either
+
+* Mini websocket proxy server which also performs Pyramid authentication and does mapping to a correct localhost port/process automatically
+
+* The whole architecture is built around single IPython Notebook port and process concept, using IPython Notebook profiles instead of processes for user separation
 
 Troubleshooting
 ===============
@@ -328,3 +354,10 @@ Run full test coverage::
 
     py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
+
+Related work
+------------
+
+* https://github.com/Carreau/IPython-notebook-proxy
+
+* https://github.com/UnataInc/ipydra/tree/master/ipydrar
