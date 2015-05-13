@@ -4,6 +4,7 @@ import logging
 import time
 
 import uwsgi
+from pyramid import httpexceptions
 from ws4py import WS_VERSION
 from ws4py.client import WebSocketBaseClient
 
@@ -121,5 +122,5 @@ def serve_websocket(request, port):
     ws = ProxyClient(url, headers=headers)
     ws.connect()
 
-    # Happens only if exceptions fly around
-    return ""
+    # TODO: Will complain loudly about already send headers - how to abort?
+    return httpexceptions.HTTPOk()
