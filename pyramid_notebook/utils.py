@@ -63,3 +63,16 @@ class change_directory:
         self._cwd = self._pwd
 
 
+
+def route_to_alt_domain(request, url):
+    """Route URL to a different subdomain.
+
+    Used to rewrite URLs to point to websocket serving domain.
+    """
+
+    # Do we need to route IPython Notebook request from a different location
+    alternative_domain = request.registry.settings.get("pyramid_notebook.alternative_domain", "").strip()
+    if alternative_domain:
+        url = url.replace(request.host_url, alternative_domain)
+    return url
+

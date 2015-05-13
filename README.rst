@@ -332,6 +332,19 @@ Also you need to enable websockets in your uWSGI settings::
     http-websockets = true
 
 
+Websocket and reverse proxy services
+------------------------------------
+
+Reverse proxy services, like CloudFlare <https://support.cloudflare.com/hc/en-us/articles/200169466-Can-I-use-CloudFlare-with-WebSockets->`_, might give only limited or no support for websockets. This may manifest itself in the form of *400 Bad Request* responses from the server because the reverse proxy service strips out ``Connection: Upgrade`` HTTP Request header. In this case it is recommended that you serve websockets from a separate domain where the websocket connection gets unhindered access to your server.
+
+You need to
+
+* Configure your naked web server to respond to an alternative domain name (``ws.example.com``)
+
+* Configure ``pyramid_notebook`` to rewrite notebook URLs to come from the alternative domain::
+
+    pyramid_notebook.alternative_domain = https://ws.example.com
+
 Architecture
 ============
 

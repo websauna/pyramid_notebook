@@ -6,7 +6,7 @@ from pyramid.util import DottedNameResolver
 
 from pyramid_notebook.notebookmanager import NotebookManager
 from pyramid_notebook.proxy import WSGIProxyApplication
-from pyramid_notebook.utils import make_dict_hash
+from pyramid_notebook.utils import make_dict_hash, route_to_alt_domain
 
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ def prepare_notebook_context(request, notebook_context):
     #     globals_["home_title"] = "Back to site"
 
     # Tell notebook to correctly address WebSockets allow origin policy
-    notebook_context["allow_origin"] = request.host_url
+    notebook_context["allow_origin"] = route_to_alt_domain(request, request.host_url)
     notebook_context["notebook_path"] = request.route_path("notebook_proxy", remainder="")
 
     # Record the hash of the current parameters, so we know if this user accesses the notebook in this or different context
@@ -177,7 +177,10 @@ def launch_notebook(request, username, notebook_context):
     notebook_info = launch_on_demand(request, username, notebook_context)
 
     # Jump to the detault notebook
-    return HTTPFound(request.route_url("notebook_proxy", remainder="notebooks/default.ipynb"))
+    proxy_route = request.route_url("notebook_proxy", remainder="notebooks/default.ipynb")
+    proxy_route = route_to_alt_domain(request, proxy_route)
+
+    return HTTPFound(proxy_route)
 
 
 def shutdown_notebook(request, username):

@@ -106,3 +106,17 @@ def web_server(request, ini_settings):
 
     return {"host_base": host_base, "port": port}
 
+
+@pytest.fixture()
+def pyramid_request(request):
+
+    from pyramid import testing
+
+    testing.setUp()
+    def teardown():
+        testing.tearDown()
+
+    request.addfinalizer(teardown)
+
+    _request = testing.DummyRequest()
+    return _request
