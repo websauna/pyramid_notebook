@@ -53,7 +53,6 @@ def make_startup(notebook_context, config_file):
 
     nc = notebook_context
 
-    add_greeting(nc, "\nNote: default.ipynb notebook will be cleared upon exit - do not save")
     add_greeting(nc, "\nAvailable variables and functions:")
 
     # http://docs.pylonsproject.org/projects/pyramid/en/1.1-branch/narr/commandline.html#writing-a-script

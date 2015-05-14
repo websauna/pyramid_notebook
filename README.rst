@@ -46,6 +46,8 @@ Benefits
 
 * Authentication integration: use the same credentials as you use for the site administration. Each Pyramid user gets his/her own IPython Notebook process.
 
+* Rich user interface: Place the cursor with a mouse, use desktop shortcuts for line editing.
+
 Use cases
 ---------
 
@@ -375,7 +377,7 @@ Scalability
 
 The tool is intended for team internal use only. The default settings limit the number of users who can create and access notebooks to 10 people.
 
-Currently a new daemon process is launched for each user in non-scalable manner. If 100+ users scalability is required there exist seveal ways to make the tool more lightweight.
+Currently a new daemon process is launched for each user in non-scalable manner. If 100+ users scalability is required there exist several ways to make the tool more lightweight. For example, `you can offload Websockets away from main uWSGI server to a dedicated gevent server <http://uwsgi-docs.readthedocs.org/en/latest/articles/OffloadingWebsocketsAndSSE.html>`_.
 
 Security
 ========

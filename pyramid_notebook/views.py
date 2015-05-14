@@ -177,7 +177,7 @@ def launch_notebook(request, username, notebook_context):
     notebook_info = launch_on_demand(request, username, notebook_context)
 
     # Jump to the detault notebook
-    proxy_route = request.route_url("notebook_proxy", remainder="notebooks/default.ipynb")
+    proxy_route = request.route_url("notebook_proxy", remainder="notebooks/{}".format(notebook_info["notebook_name"]))
     proxy_route = route_to_alt_domain(request, proxy_route)
 
     return HTTPFound(proxy_route)

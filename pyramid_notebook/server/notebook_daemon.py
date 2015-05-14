@@ -90,8 +90,6 @@ def _run_notebook(foreground=False):
 
     assert port
 
-    notebook_name = "default.ipynb"
-
     os.environ["IPYTHONDIR"] = os.path.join(os.getcwd(), ".ipython")
 
     # Update context file with command line port settings
@@ -111,9 +109,19 @@ def _run_notebook(foreground=False):
 
         print("Starting with context {}".format(context), file=sys.stderr)
 
+    hash = context["context_hash"]
+    if hash < 0:
+        # Python hasher can create negative integers which look funny in URL.
+        # Let's sacrifice one bit of hash collision for aesthetics.
+        hash = -hash
+
+    notebook_name = "default-{}.ipynb".format(hash)
+
     context["http_port"] = port
     context["pid"] = os.getpid()
     context["kill_timeout"] = kill_timeout
+    context["notebook_name"] = notebook_name
+
     comm.set_context(pid_file, context)
 
     create_named_notebook(notebook_name, context)

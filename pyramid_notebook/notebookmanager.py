@@ -149,12 +149,6 @@ class NotebookManager:
     def stop_notebook(self, name):
         self.exec_notebook_daemon_command(name, "stop")
 
-        # TODO: Have some more sane behavior here
-        # Also delete the default notebook
-        notebook_file = os.path.join(os.path.dirname(self.get_pid(name)), "default.ipynb")
-        if os.path.exists(notebook_file):
-            os.remove(notebook_file)
-
     def is_running(self, name):
         status = self.get_notebook_status(name)
         if status:
