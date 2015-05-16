@@ -9,6 +9,7 @@ import os
 import atexit
 import signal
 import sys
+import faulthandler
 
 import daemonocle
 from daemonocle import expose_action
@@ -192,9 +193,14 @@ if __name__ == '__main__':
     else:
 
         def shutdown(message, code):
+            f = io.open("/tmp/notebook.shutdown.dump", "wt")
+            faulthandler.dump_traceback(f)
             print("shutdown {}: {}".format(message, code), file=sys.stderr)
             sys.stderr.flush()
             clear_context()
+
+        f = io.open("/tmp/notebook.dump", "wt")
+        faulthandler.enable(f)
 
         daemon = NotebookDaemon(pidfile=pid_file, workdir=workdir, shutdown_callback=shutdown)
         daemon.worker = run_notebook
