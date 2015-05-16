@@ -3,6 +3,7 @@ from contextlib import redirect_stdout
 import logging
 
 import json
+import time
 from IPython.nbformat.v4.nbjson import JSONWriter
 import io
 import os
@@ -14,6 +15,7 @@ import faulthandler
 import daemonocle
 from daemonocle import expose_action
 from daemonocle import DaemonError
+import psutil
 from pyramid_notebook.server import comm
 
 try:
@@ -34,6 +36,50 @@ class NotebookDaemon(daemonocle.Daemon):
     def __init__(self, **kwargs):
         super(NotebookDaemon, self).__init__(**kwargs)
 
+    @expose_action
+    def stop(self):
+        """Stop the daemon.
+
+        IPython Notebook tends to hang on exit 1) on certain Linux servers 2) sometimes.
+        I am not sure why, but here is the traceback back when gdb was attached to the process::
+
+            #0  0x00007fa7632c912d in poll () at ../sysdeps/unix/syscall-template.S:81
+            #1  0x00007fa75e6d2f6a in poll (__timeout=<optimized out>, __nfds=2, __fds=0x7fffd2c60940) at /usr/include/x86_64-linux-gnu/bits/poll2.h:46
+            #2  zmq_poll (items_=items_@entry=0x2576f00, nitems_=nitems_@entry=2, timeout_=timeout_@entry=2997) at bundled/zeromq/src/zmq.cpp:736
+            #3  0x00007fa75d0d7c0b in __pyx_pf_3zmq_7backend_6cython_5_poll_zmq_poll (__pyx_self=<optimized out>, __pyx_v_timeout=2997, __pyx_v_sockets=0x7fa75b82c848) at zmq/backend/cython/_poll.c:1552
+            #4  __pyx_pw_3zmq_7backend_6cython_5_poll_1zmq_poll (__pyx_self=<optimized out>, __pyx_args=<optimized out>, __pyx_kwds=<optimized out>) at zmq/backend/cython/_poll.c:1023
+            #5  0x000000000057bf33 in PyEval_EvalFrameEx ()
+            #6  0x000000000057d3d3 in PyEval_EvalCodeEx ()
+
+        Smells like pyzmq bug. In any it would take pretty extensive debugging to find out why it doesn't always quit cleanly, so we just SIGKILL the process after certain timeout.
+        """
+        if self.pidfile is None:
+            raise DaemonError('Cannot stop daemon without PID file')
+
+        pid = self._read_pidfile()
+        if pid is None:
+            # I don't think this should be a fatal error
+            self._emit_warning('{prog} is not running'.format(prog=self.prog))
+            return
+
+        self._emit_message('Stopping {prog} ... '.format(prog=self.prog))
+
+        try:
+            # Try to terminate the process
+            os.kill(pid, signal.SIGTERM)
+        except OSError as ex:
+            self._emit_failed()
+            self._emit_error(str(ex))
+            sys.exit(1)
+
+        _, alive = psutil.wait_procs([psutil.Process(pid)], timeout=self.stop_timeout)
+        if alive:
+            # The process didn't terminate for some reason
+            os.kill(pid, signal.SIGKILL)
+            time.sleep(0.5)
+            # Hahahaha. Do you feel alive now?
+
+        self._emit_ok()
 
 def create_named_notebook(fname, context):
     """Create a named notebook if one doesn't exist."""
