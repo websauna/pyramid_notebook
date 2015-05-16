@@ -92,7 +92,11 @@ class NotebookManager:
 
         logger.info("Running notebook command: %s", " ".join(cmd))
 
-        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        # Add support for traceback dump on stuck
+        env = os.environ.copy()
+        env["PYTHONFAULTHANDLER"] = True
+
+        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, env=env)
         stdout, stderr = p.communicate()
 
         if p.returncode != 0:
