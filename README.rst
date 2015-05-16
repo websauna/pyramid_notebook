@@ -324,7 +324,23 @@ On the production server, you usually run a web server which spawns processes to
 
  * `uWSGI <https://uwsgi-docs.readthedocs.org/en/latest/>`_
 
-It is ok to have another web server at the front of uWSGI, like Nginx, as these web servers can usually do proxy pass for websocket connections.
+It is ok to have another web server at the front of uWSGI, like Nginx, as these web servers can usually do proxy pass for websocket connections. You might need to add following to your Nginx config::
+
+    # include a variable for the upgrade header
+    map $http_upgrade $connection_upgrade {
+        default   upgrade;
+        ''        close;
+    }
+
+    server {
+        location / {
+            include uwsgi_params;
+
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+        }
+    }
 
 uWSGI
 ~~~~~
