@@ -94,7 +94,7 @@ class NotebookManager:
 
         # Add support for traceback dump on stuck
         env = os.environ.copy()
-        env["PYTHONFAULTHANDLER"] = True
+        env["PYTHONFAULTHANDLER"] = "true"
 
         p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, env=env)
         stdout, stderr = p.communicate()
