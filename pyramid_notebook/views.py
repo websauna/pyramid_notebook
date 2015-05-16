@@ -131,7 +131,8 @@ def launch_on_demand(request, username, notebook_context):
     #assert websocket_url.startswith("ws:/") or websocket_url.startswith("wss:/")
 
     if request.registry.settings.get("pyramid_notebook.websocket_proxy", ""):
-        websocket_url = request.host_url.replace("http://", "ws://").replace("https://", "wss://")
+        websocket_url = route_to_alt_domain(request, request.host_url)
+        websocket_url = websocket_url.replace("http://", "ws://").replace("https://", "wss://")
         notebook_context["websocket_url"] = websocket_url
     else:
         # Connect websockets directly to localhost notebook server, do not try to proxy them

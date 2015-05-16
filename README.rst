@@ -249,6 +249,10 @@ Pyramid settings
     # For uWSGI in production
     # pyramid_notebook.websocket_proxy = pyramid_notebook.uwsgi.serve_websocket
 
+    # If you need to server websockets from alternative domain (See below).
+    # Example value: https://ws.example.com
+    pyramid_notebook.alternative_domain =
+
 Notebook context parameters
 ---------------------------
 
