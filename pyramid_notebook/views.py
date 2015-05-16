@@ -28,7 +28,7 @@ def proxy_it(request, port):
         r = DottedNameResolver()
         websocket_proxy = r.maybe_resolve(websocket_proxy)
 
-    if request.headers.get("connection", "").lower() == "upgrade":
+    if "upgrade" in request.headers.get("connection", "").lower():
         if websocket_proxy:
             return websocket_proxy(request, port)
         else:

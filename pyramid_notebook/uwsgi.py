@@ -28,7 +28,7 @@ class ProxyClient(WebSocketBaseClient):
         headers = [
             ('Host', self.host),
             ('Connection', 'Upgrade'),
-            ('Upgrade', 'websocket'),
+            ('Upgrade', 'WebSocket'),
             ('Sec-WebSocket-Key', self.key.decode('utf-8')),
             # Origin is proxyed from the downstream server, don't set it twice
             # ('Origin', self.url),

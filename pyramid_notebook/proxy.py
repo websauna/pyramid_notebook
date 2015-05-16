@@ -8,9 +8,10 @@ from urllib.parse import urlparse, urlunsplit, urlunparse, unquote_plus
 #: (:class:`frozenset`) The set of hop-by-hop headers.  All header names
 #: all normalized to lowercase.
 HOPPISH_HEADERS = frozenset([
-    'connection', 'keep-alive', 'proxy-authenticate',
+    'keep-alive', 'proxy-authenticate',
     'proxy-authorization', 'te', 'trailers', 'transfer-encoding',
-    'upgrade', 'proxy-connection'
+    'proxy-connection'
+    # "upgrade", "connection"
 ])
 
 
