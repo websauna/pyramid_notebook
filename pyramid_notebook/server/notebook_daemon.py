@@ -52,6 +52,8 @@ class NotebookDaemon(daemonocle.Daemon):
             #6  0x000000000057d3d3 in PyEval_EvalCodeEx ()
 
         Smells like pyzmq bug. In any it would take pretty extensive debugging to find out why it doesn't always quit cleanly, so we just SIGKILL the process after certain timeout.
+
+        Related bug, but this should be apparently fixed: https://github.com/zeromq/pyzmq/pull/618
         """
         if self.pidfile is None:
             raise DaemonError('Cannot stop daemon without PID file')

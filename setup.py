@@ -1,10 +1,3 @@
-"""A setuptools based setup module.
-
-See:
-https://packaging.python.org/en/latest/distributing.html
-https://github.com/pypa/sampleproject
-"""
-
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 # To use a consistent encoding
@@ -13,9 +6,11 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
+
 # Get the long description from the relevant file
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
+
 
 setup(
     name='pyramid_notebook',
@@ -23,13 +18,13 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.2.0',
+    version='0.1.0',
 
-    description='Embed IPython Notebook on your Pyramid website',
+    description='Embed IPython Notebook shell on your Pyramid website',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/',
+    url='https://bitbucket.org/miohtama/pyramid_notebook',
 
     # Author details
     author='The Python Packaging Authority',
@@ -49,6 +44,7 @@ setup(
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
+        'Topic :: System :: Shells'
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
@@ -56,10 +52,12 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Framework :: Pyramid',
+        'Framework :: IPython'
     ],
 
     # What does your project relate to?
-    keywords='sample setuptools development',
+    keywords='ipython setuptools development shell uwsgi',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -85,10 +83,6 @@ setup(
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
-        'console_scripts': [
-            'sample=sample:main',
-        ],
-
         "paste.app_factory": [
             'main = pyramid_notebook.demo:main'
         ]

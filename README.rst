@@ -530,6 +530,8 @@ Running uWSGI under Nginx for manual websocket proxy testing (OSX)::
 Related work
 ------------
 
+* https://github.com/jupyter/jupyterhub
+
 * https://github.com/Carreau/IPython-notebook-proxy
 
 * https://github.com/UnataInc/ipydra/tree/master/ipydrar
