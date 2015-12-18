@@ -1,11 +1,12 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.2 (unreleased)
+0.1.2 (2015-12-19)
 ------------------
 
 - Fixed README markup
 
+- Fixed broken drone.io integration which prevented tests to pass on CI
 
 0.1.1 (2015-12-19)
 ------------------
