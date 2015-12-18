@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.4 (unreleased)
+0.1.4 (2015-12-19)
 ------------------
 
-- Nothing changed yet.
+- Fixed relative image links to absolute in README
 
 
 0.1.3 (2015-12-19)

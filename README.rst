@@ -380,13 +380,13 @@ Launched Notebook processes are daemonized and separated from the web server pro
 Local deployment
 ----------------
 
-.. image :: docs/localhost_deployment.png
+.. image :: https://bytebucket.org/miohtama/pyramid_notebook/raw/6d8df85c63d1434e46644d000e8809192e9dc4ed/docs/localhost_deployment.png
 
 
 Production deployment
 ---------------------
 
-.. image :: docs/production_deployment.png
+.. image :: https://bytebucket.org/miohtama/pyramid_notebook/raw/6d8df85c63d1434e46644d000e8809192e9dc4ed/docs/production_deployment.png
 
 
 Scalability
