@@ -2,28 +2,25 @@ Embed IPython Notebook shell on your Pyramid web site and start through-the-brow
 
 `IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
 
-.. |docs| image:: https://readthedocs.org/projects/cryptoassetscore/badge/?version=latest
-    :target: http://cryptoassetscore.readthedocs.org/en/latest/
-
 .. |ci| image:: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/status.png
     :target: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/latest
 
 .. |cov| image:: https://codecov.io/bitbucket/miohtama/pyramid_notebook/coverage.svg?branch=master
     :target: https://codecov.io/bitbucket/miohtama/pyramid_notebook?branch=master
 
-.. |downloads| image:: https://pypip.in/download/pyramid_notebook/badge.png
+.. |downloads| image:: https://img.shields.io/pypi/dm/pyramid_notebook.svg
     :target: https://pypi.python.org/pypi/pyramid_notebook/
     :alt: Downloads
 
-.. |latest| image:: https://pypip.in/version/pyramid_notebook/badge.png
+.. |latest| image:: https://img.shields.io/pypi/v/pyramid_notebook.svg
     :target: https://pypi.python.org/pypi/pyramid_notebook/
     :alt: Latest Version
 
-.. |license| image:: https://pypip.in/license/pyramid_notebook/badge.png
+.. |license| image:: https://img.shields.io/pypi/l/pyramid_notebook.svg
     :target: https://pypi.python.org/pypi/pyramid_notebook/
     :alt: License
 
-.. |versions| image:: https://pypip.in/py_versions/pyramid_notebook/badge.png
+.. |versions| image:: https://img.shields.io/pypi/pyversions/pyramid_notebook.svg
     :target: https://pypi.python.org/pypi/pyramid_notebook/
     :alt: Supported Python versions
 
@@ -488,7 +485,7 @@ If the startup script does not populate your Notebook with default variables as 
 
 * ``print(gocals())`` to see what global variables are set
 
-* Manually execute startup script inside IPython Notebook, e.g. ``exec(open("/private/tmp/pyramid_notebook/user-1/.ipython/profile_default/startup/startup.py").read())``
+* Manually execute startup script inside IPython Notebook, e.g. ``exec(open("/private/tmp/pyramid_notebook/YOURUSERNAMEHERE/.ipython/profile_default/startup/startup.py").read())``
 
 Development
 ===========

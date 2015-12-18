@@ -188,6 +188,7 @@ class NotebookManager:
                 return last_context, False
 
         logger.info("Launching new Notebook named %s, context is %s", name, context)
+        logger.info("Notebook log is %s/notebook.stderr.log", self.get_work_folder(name))
         self.start_notebook(name, context)
         time.sleep(1)
         return self.get_context(name), True

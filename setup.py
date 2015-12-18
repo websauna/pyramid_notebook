@@ -18,17 +18,17 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.0',
+    version='0.1',
 
     description='Embed IPython Notebook shell on your Pyramid website',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/miohtama/pyramid_notebook',
+    url='https://bitbucket.org/miohtama/pyramid_notebook ',
 
     # Author details
-    author='The Python Packaging Authority',
-    author_email='pypa-dev@googlegroups.com',
+    author='Mikko Ohtamaa',
+    author_email='mikko@opensourcehacker.com',
 
     # Choose your license
     license='MIT',
