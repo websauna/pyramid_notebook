@@ -47,7 +47,7 @@ setup(
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'Topic :: System :: Shells'
+        'Topic :: System :: Shells',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
@@ -56,7 +56,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Framework :: Pyramid',
-        'Framework :: IPython'
+        'Framework :: IPython',
     ],
 
     # What does your project relate to?
