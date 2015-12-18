@@ -1,0 +1,6 @@
+recursive-include pyramid_notebook *
+recursive-include docs *
+recursive-include screenshots *
+include *
+global-exclude *.pyc
+
