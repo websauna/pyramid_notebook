@@ -37,6 +37,8 @@ def hacker_typing(browser, spinter_selection, code):
     """We need to break Splinter abstraction and fall back to raw Selenium here.
 
     Note: There is a bug of entering parenthesis due to IPython capturing keyboard input.
+
+    http://stackoverflow.com/questions/22168651/how-to-enter-left-parentheses-into-a-text-box
     """
     elem = spinter_selection[0]._element
     driver = browser.driver
@@ -44,7 +46,7 @@ def hacker_typing(browser, spinter_selection, code):
     # Activate IPython input mode
     ActionChains(driver).click(elem).send_keys(Keys.ENTER).perform()
 
-    # Tyoe int he code
+    # Type in the code
     a = ActionChains(driver)
     a.send_keys(code)
     a.perform()
@@ -76,6 +78,7 @@ def test_add_context_variables(web_server, browser):
     b.find_by_css("#pyramid_notebook_shutdown").click()
 
     # There should be alert "Do you really wish to leave notebook?"
+    time.sleep(0.5)
     alert = b.driver.switch_to_alert()
     alert.accept()
 

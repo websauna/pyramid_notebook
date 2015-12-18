@@ -507,13 +507,17 @@ Install test dependencies::
 
     pip install -e ".[test]"
 
-Running single test::
+Running tests::
 
-     py.test tests/* --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
+    py.test tests --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini
+
+Running a single test::
+
+     py.test tests/* --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
 Run full test coverage::
 
-    py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=firefox --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
+    py.test tests/* --cov pyramid_notebook --cov-report xml --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_notebook_template
 
 Running uWSGI server with websockets::
 
@@ -523,6 +527,11 @@ Running uWSGI under Nginx for manual websocket proxy testing (OSX)::
 
     pkill nginx ; nginx -c `pwd`/nginx.conf
     uwsgi --virtualenv=venv --wsgi-file=pyramid_notebook/demo/wsgi.py --pythonpath=venv/bin/python uwsgi-under-nginx.ini
+
+
+.. note ::
+
+    Selenium Firefox has a bug which prevents typing ( on keyboard, preventing running tests on Firefox.
 
 Related work
 ------------

@@ -117,15 +117,17 @@ class NotebookManager:
             return None
         return context
 
-    def start_notebook(self, name, context, fg=False):
+    def start_notebook(self, name, context:dict, fg=False):
         """Start new IPython Notebook daemon.
 
         :param name: The owner of the Notebook will be *name*. He/she gets a new Notebook content folder created where all files are placed.
 
-        :param context: Extra context information passed to the started Notebook
+        :param context: Extra context information passed to the started Notebook. This must contain {context_hash:int} parameter used to identify the launch parameters for the notebook
         """
-        if not context:
-            context = {}
+        assert context
+        assert type(context) == dict
+        assert "context_hash" in context
+        assert type(context["context_hash"]) == int
 
         http_port = self.pick_port()
         assert http_port
