@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.3 (unreleased)
+0.1.3 (2015-12-19)
 ------------------
 
-- Nothing changed yet.
+- Fixing MANIFEST.in and release issues due to setuptools_git not present
 
 
 0.1.2 (2015-12-19)

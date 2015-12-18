@@ -1,5 +1,3 @@
-recursive-include pyramid_notebook *
-recursive-include docs *
-include *
-global-exclude *.pyc
-
+exclude .gitignore
+exclude tests
+exclude tests/*
