@@ -59,7 +59,7 @@ Prerequisites
 
 * `Pyramid web site <http://www.pylonsproject.org/projects/pyramid/about>`_ (can be easily extended to other web frameworks)
 
-* Python 3.3+
+* Python 3.4+
 
 * OSX, Linux
 
