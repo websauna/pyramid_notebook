@@ -34,8 +34,13 @@ Embed IPython Notebook shell on your Pyramid web site and start through-the-brow
 
 .. contents:: :local:
 
+
+.. note ::
+
+    The current version has not been updated from IPython 3.0 to IPython 4.0 (Jupyter) yet.
+
 Benefits
-=========
+========
 
 * Easy access: All through web browser, no additional software installation needed.
 
@@ -532,6 +537,22 @@ Running uWSGI under Nginx for manual websocket proxy testing (OSX)::
 .. note ::
 
     Selenium Firefox has a bug which prevents typing ( on keyboard, preventing running tests on Firefox.
+
+Manual testing
+++++++++++++++
+
+You can manually launch the process to see any errors from IPython Notebook start.
+
+Run ``test_start_stop`` test and capture log output in stdout::
+
+    py.test tests --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -k test_start_stop
+    ...
+    INFO:pyramid_notebook.notebookmanager:Running notebook command: /Users/mikko/code/trees/venv/bin/python3.4 /Users/mikko/code/trees/pyramid_notebook/pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40007 60
+
+You can::
+
+    /Users/mikko/code/trees/venv/bin/python3.4 /Users/mikko/code/trees/pyramid_notebook/pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40005 60
+
 
 Related work
 ------------

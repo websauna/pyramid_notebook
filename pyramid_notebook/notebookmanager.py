@@ -170,7 +170,6 @@ class NotebookManager:
 
         return context_a.get("context_hash") == context_b.get("context_hash")
 
-
     def start_notebook_on_demand(self, name, context):
         """Start notebook if not yet running with these settings.
 
