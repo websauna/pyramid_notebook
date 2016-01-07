@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.5 (unreleased)
+0.1.5 (2016-01-07)
 ------------------
 
-- Nothing changed yet.
+- Keep IPython Notebook in 3.x series now by setup.py pinnings, as IPython 4.0 is not supported yet
 
 
 0.1.4 (2015-12-19)
