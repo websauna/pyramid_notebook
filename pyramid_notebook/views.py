@@ -36,6 +36,7 @@ def proxy_it(request, port):
             raise RuntimeError("Websocket proxy support is not configured.")
 
     proxy_app = WSGIProxyApplication(port)
+
     return request.get_response(proxy_app)
 
 

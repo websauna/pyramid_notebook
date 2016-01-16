@@ -162,12 +162,24 @@ class WSGIProxyApplication:
         except Exception as e:
             # We need extra exception handling in the case the server fails
             # in mid connection, it's an edge case but I've seen it
-            logger.exception(e)
+            if isinstance(e, ConnectionRefusedError):
+                # The notebook was shutdown by the user
+                pass
+            else:
+                # This might be a genuine error
+                logger.exception(e)
+
             start_response('501 Gateway Error', [('Content-Type', 'text/html')])
             yield '<H1>Could not proxy IPython Notebook running localhost:{}</H1>'.format(self.port).encode("utf-8")
             return
 
-        response = connection.getresponse()
+        try:
+            response = connection.getresponse()
+        except ConnectionResetError:
+            # Notebook shutdown
+            start_response('501 Gateway Error', [('Content-Type', 'text/html')])
+            yield '<H1>Could not proxy IPython Notebook running localhost:{}</H1>'.format(self.port).encode("utf-8")
+            return
 
         hopped_headers = response.getheaders()
         headers = [(key, value)
