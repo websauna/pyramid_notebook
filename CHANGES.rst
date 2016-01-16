@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.7 (unreleased)
+0.1.7 (2016-01-16)
 ------------------
 
-- Nothing changed yet.
+- Fixed README reST syntax
 
 
 0.1.6 (2016-01-16)

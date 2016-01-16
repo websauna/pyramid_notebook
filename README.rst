@@ -539,7 +539,7 @@ Running uWSGI under Nginx for manual websocket proxy testing (OSX)::
     Selenium Firefox has a bug which prevents typing ( on keyboard, preventing running tests on Firefox.
 
 Manual testing
-++++++++++++++
+~~~~~~~~~~~~~~
 
 You can manually launch the process to see any errors from IPython Notebook start.
 
