@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.8 (unreleased)
+0.1.8 (2016-01-31)
 ------------------
 
-- Nothing changed yet.
+- Adding ws4py as a dependency as it is required for uWSGI which is currently the only supported implementation
 
 
 0.1.7 (2016-01-16)
