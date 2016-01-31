@@ -1,6 +1,12 @@
 Changelog for pyramid_notebook
 ==============================
 
+0.1.9 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
 0.1.8 (2016-01-31)
 ------------------
 
