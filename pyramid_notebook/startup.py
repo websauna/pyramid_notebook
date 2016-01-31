@@ -18,8 +18,8 @@ from pyramid.paster import bootstrap
 from pyramid_notebook.utils import change_directory
 
 # Our development.ini, production.ini, etc.
-config_file = '{}'
-project_root_path = os.path.dirname(config_file)
+config_file = '{config_uri}'
+project_root_path = '{cwd}' or os.path.dirname(config_file)
 
 # Most of Pyramid projects expect you run pserve et. al. in the project folder itself, thus config is hardwired to have project root relative paths
 with change_directory(project_root_path):
@@ -39,7 +39,7 @@ def get_import_statement(klass):
     return "from {} import {}".format(klass.__module__, klass.__name__)
 
 
-def make_startup(notebook_context, config_file, bootstrap_py=PYRAMID_BOOSTRAP, bootstrap_greeting=PYRAMID_GREETING):
+def make_startup(notebook_context, config_file, bootstrap_py=PYRAMID_BOOSTRAP, bootstrap_greeting=PYRAMID_GREETING, cwd=""):
     """Populate notebook context with startup.py initialization file skeleton and greeting.
 
     This will set up context ``startup`` and ``greeting`` for their default values.
@@ -47,6 +47,12 @@ def make_startup(notebook_context, config_file, bootstrap_py=PYRAMID_BOOSTRAP, b
     :param notebook_context: Dictionary of notebook context info to be to passed to NotebookManager
 
     :param config_file: The current .ini file used to start up the Pyramid. This is used to pass it around to ``pyramid.paster.boostrap()`` to initialize dummy request object and such.
+
+    :param bootstrap_py: startup.py script header which sets up environment creation
+
+    :parma bootstrap_greeting: Markdown snippet which sets up start of greeting text
+
+    :param cwd: Optional forced working directory. If not set use the directory of a config file.
     """
 
     # Set up some default imports and variables
@@ -61,7 +67,7 @@ def make_startup(notebook_context, config_file, bootstrap_py=PYRAMID_BOOSTRAP, b
         assert type(config_file) == str, "Got bad config_file {}".format(config_file)
         config_file = os.path.abspath(config_file)
         assert os.path.exists(config_file), "Passed in bad config file: {}".format(config_file)
-        add_script(nc, bootstrap_py.format(config_file))
+        add_script(nc, bootstrap_py.format(config_uri=config_file, cwd=cwd))
         add_greeting(nc, bootstrap_greeting)
 
     add_script(nc, "import datetime")
