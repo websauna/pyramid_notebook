@@ -1,7 +1,7 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.9 (unreleased)
+0.1.9 (2016-01-31)
 ------------------
 
 - Make it possible to override the default bootstrap scripts and greeting for ``make_startup()``
