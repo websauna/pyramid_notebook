@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.10 (unreleased)
+0.1.10 (2016-01-31)
 -------------------
 
-- Nothing changed yet.
+- Allow easily override IPython Notebook current working directory.
 
 
 0.1.9 (2016-01-31)
