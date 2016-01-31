@@ -194,8 +194,8 @@ Then we have a custom principals handler granting the ``shell`` permission for u
     def find_groups(userid, request):
         """Get applied groups and other for the user"""
 
-        from horus.interfaces import IUserClass
-        user_class = request.registry.queryUtility(IUserClass)
+        from horus.interfaces import IUserModel
+        user_class = request.registry.queryUtility(IUserModel)
 
         # Read superuser names from the config
         superusers = aslist(request.registry.settings.get("pyramid_web20.superusers"))
