@@ -20,3 +20,5 @@ coverage.xml
 screenshots/*
 *.vpp~*
 *.vpp.working
+
+.cache

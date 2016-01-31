@@ -39,7 +39,7 @@ def get_import_statement(klass):
     return "from {} import {}".format(klass.__module__, klass.__name__)
 
 
-def make_startup(notebook_context, config_file):
+def make_startup(notebook_context, config_file, bootstrap_py=PYRAMID_BOOSTRAP, bootstrap_greeting=PYRAMID_GREETING):
     """Populate notebook context with startup.py initialization file skeleton and greeting.
 
     This will set up context ``startup`` and ``greeting`` for their default values.
@@ -61,9 +61,8 @@ def make_startup(notebook_context, config_file):
         assert type(config_file) == str, "Got bad config_file {}".format(config_file)
         config_file = os.path.abspath(config_file)
         assert os.path.exists(config_file), "Passed in bad config file: {}".format(config_file)
-        add_script(nc, PYRAMID_BOOSTRAP.format(config_file))
-
-        add_greeting(nc, PYRAMID_GREETING)
+        add_script(nc, bootstrap_py.format(config_file))
+        add_greeting(nc, bootstrap_greeting)
 
     add_script(nc, "import datetime")
     add_greeting(nc, "* **datetime** - Python [datetime module](https://docs.python.org/3.5/library/datetime.html)")
