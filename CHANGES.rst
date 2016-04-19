@@ -1,10 +1,10 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.11 (unreleased)
+0.1.11 (2016-04-18)
 -------------------
 
-- Nothing changed yet.
+- Upgrade to Daemonocle 1.0
 
 
 0.1.10 (2016-01-31)
