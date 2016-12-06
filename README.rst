@@ -34,7 +34,7 @@ Embed IPython Notebook shell on your Pyramid web site and start through-the-brow
 
 .. contents:: :local:
 
-.. image :: https://bytebucket.org/miohtama/pyramid_notebook/raw/6d8df85c63d1434e46644d000e8809192e9dc4ed/docs/production_deployment.png
+.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/animation.gif
 
 Benefits
 ========
