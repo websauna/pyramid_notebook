@@ -1,4 +1,3 @@
-import json
 import port_for
 import logging
 import subprocess
@@ -7,6 +6,7 @@ import sys
 import time
 
 from .server import comm
+
 
 logger = logging.getLogger(__name__)
 
@@ -97,8 +97,11 @@ class NotebookManager:
         env["PYTHONFAULTHANDLER"] = "true"
 
         p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, env=env)
-
+        time.sleep(0.2)
         stdout, stderr = p.communicate()
+
+        if b"already running" in stderr:
+            raise RuntimeError("Looks like notebook_daemon is already running. Please kill it manually pkill -f notebook_daemon. Was: {}".format(stderr.decode("utf-8")))
 
         if p.returncode != 0:
             logger.error("STDOUT: %s", stdout)
@@ -200,8 +203,3 @@ class NotebookManager:
             raise RuntimeError("Failed to launch IPython Notebook, see {}".format(err_log))
 
         return context, True
-
-
-
-
-

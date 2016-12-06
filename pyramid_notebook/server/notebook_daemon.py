@@ -143,6 +143,9 @@ def _run_notebook(foreground=False):
     config_dir = os.path.join(os.getcwd(), ".jupyter")
     os.environ["JUPYTER_CONFIG_DIR"] = config_dir
 
+    # http://ipython.readthedocs.io/en/stable/development/config.html#configuration-file-location
+    os.environ["IPYTHONDIR"] = config_dir
+
     # Update context file with command line port settings
     context = comm.get_context(pid_file, daemon=True)
 
@@ -199,7 +202,7 @@ def _run_notebook(foreground=False):
 
         if "startup" in context:
             # Drop in custom startup script
-            startup_folder = os.path.join(os.getcwd(), ".jupyter/profile_default/startup/")
+            startup_folder = os.path.join(config_dir, "profile_default/startup/")
             os.makedirs(startup_folder, exist_ok=True)
             startup_py = os.path.join(startup_folder, "startup.py")
             print("Dropping startup script {}".format(startup_py), file=sys.stderr)
