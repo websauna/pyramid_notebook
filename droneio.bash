@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-set -x
 
 # Need to upgrade to Python 3.4
 sudo add-apt-repository ppa:fkrull/deadsnakes > /dev/null 2>&1

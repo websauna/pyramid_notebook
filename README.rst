@@ -506,11 +506,15 @@ Tests
 
 .. note ::
 
-    Due to complexity of IPython Notebook interaction browser tests must be executed with full Firefox or Chrome driver.
+    Due to UI complexity of IPython Notebook interaction browser tests must be executed with full Firefox or Chrome driver.
 
 Install test dependencies::
 
     pip install -e ".[test]"
+
+Running manual instance::
+
+    pserve pyramid_notebook/demo/development.ini --reload
 
 Running tests::
 

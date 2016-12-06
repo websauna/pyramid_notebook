@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-import random
+import sys
 
 from pyramid_notebook.notebookmanager import NotebookManager
 
@@ -9,7 +9,7 @@ from pyramid_notebook.notebookmanager import NotebookManager
 NOTEBOOK_FOLDER = os.path.join("/tmp", "pyramid_notebook_tests")
 os.makedirs(NOTEBOOK_FOLDER, exist_ok=True)
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 USER = "testuser1"
 
@@ -19,11 +19,16 @@ def test_spawn():
 
     m = NotebookManager(notebook_folder=NOTEBOOK_FOLDER, kill_timeout=60)
 
-    m.start_notebook(USER, {"context_hash": 1}, fg=False)
+    output = m.start_notebook(USER, {"context_hash": 1}, fg=False)
     time.sleep(1)
 
     # pid is set if the process launched successfully
     status = m.get_notebook_status(USER)
+    if status is None:
+        # Failure to launch, get error
+        print(output)
+        raise AssertionError("Could not start, context file was not created")
+
     assert type(status) == dict
     assert status["pid"] > 0
     assert status["http_port"] > 0

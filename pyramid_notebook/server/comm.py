@@ -49,6 +49,8 @@ def set_context(pid_file, context_info):
 def get_context(pid_file, daemon=False):
     """Get context of running notebook.
 
+    A context file is created when notebook starts.
+
     :param daemon: Are we trying to fetch the context inside the daemon. Otherwise do the death check.
 
     :return: dict or None if the process is dead/not launcherd
@@ -72,7 +74,6 @@ def get_context(pid_file, daemon=False):
             if pid and not check_pid(int(pid)):
                 # The Notebook daemon has exited uncleanly, as the PID does not point to any valid process
                 return None
-
 
         return data
 

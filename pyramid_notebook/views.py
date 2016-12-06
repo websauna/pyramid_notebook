@@ -155,7 +155,6 @@ def notebook_proxy(request, username):
     """
     security_check(request, username)
 
-    settings = request.registry.settings
     manager = get_notebook_manager(request)
     notebook_info = manager.get_context(username)
 

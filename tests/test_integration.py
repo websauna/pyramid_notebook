@@ -19,10 +19,12 @@ USER = "test{}".format(random.randint(0, 1000))
 def test_notebook_template(web_server, browser):
     """See that we get custom templates through IPython Notebook"""
 
+    # Front page loads up
     b = browser
     browser.visit("http://localhost:{}/".format(web_server["port"]))
     assert b.is_text_present("pyramid_notebook test application")
 
+    # Proxied notebook loads up
     browser.visit("http://username:password@localhost:{}/shell1".format(web_server["port"]))
     time.sleep(3)
     assert b.find_by_css("#pyramid_notebook_logo")

@@ -1,16 +1,16 @@
 """Daemonized Python Notebook process with pre-allocated port, kill timeout and extra argument passing through JSON file."""
-from contextlib import redirect_stdout
 import logging
+import shutil
 
-import json
 import time
-from IPython.nbformat.v4.nbjson import JSONWriter
+from nbformat.v4.nbjson import JSONWriter
 import io
 import os
 import atexit
 import signal
 import sys
 import faulthandler
+from pathlib import Path
 
 import daemonocle
 from daemonocle import expose_action
@@ -89,7 +89,7 @@ def create_named_notebook(fname, context):
     if os.path.exists(fname):
         return
 
-    from IPython.nbformat import v4 as nbf
+    from nbformat import v4 as nbf
 
     # Courtesy of http://nbviewer.ipython.org/gist/fperez/9716279
     text = "Welcome to *pyramid_notebook!* -Mikko, https://opensourcehacker.com"
@@ -139,7 +139,9 @@ def _run_notebook(foreground=False):
 
     assert port
 
-    os.environ["IPYTHONDIR"] = os.path.join(os.getcwd(), ".ipython")
+    # http://jupyter.readthedocs.io/en/latest/projects/jupyter-directories.html
+    config_dir = os.path.join(os.getcwd(), ".jupyter")
+    os.environ["JUPYTER_CONFIG_DIR"] = config_dir
 
     # Update context file with command line port settings
     context = comm.get_context(pid_file, daemon=True)
@@ -180,13 +182,14 @@ def _run_notebook(foreground=False):
 
     try:
         import IPython
+        from traitlets.config.loader import Config
 
-        config = IPython.Config()
-
+        # http://jupyter-notebook.readthedocs.io/en/latest/config.html
+        config = Config()
         config.NotebookApp.port = port
         config.NotebookApp.open_browser = foreground
         config.NotebookApp.base_url = context.get("notebook_path", "/notebook")
-        config.NotebookApp.log_level = logging.DEBUG
+        config.Application.log_level = logging.DEBUG
         config.NotebookApp.allow_origin = context.get("allow_origin", "http://localhost:{}/".format(port))
         config.NotebookApp.extra_template_paths = context.get("extra_template_paths", [])
 
@@ -194,17 +197,27 @@ def _run_notebook(foreground=False):
             websocket_url = context.get("websocket_url", "http://localhost:{}/".format(port))
             config.NotebookApp.websocket_url = websocket_url
 
-
         if "startup" in context:
             # Drop in custom startup script
-            startup_folder = os.path.join(os.getcwd(), ".ipython/profile_default/startup/")
+            startup_folder = os.path.join(os.getcwd(), ".jupyter/profile_default/startup/")
             os.makedirs(startup_folder, exist_ok=True)
             startup_py = os.path.join(startup_folder, "startup.py")
             print("Dropping startup script {}".format(startup_py), file=sys.stderr)
             with open(startup_py, "wt") as f:
                 f.write(context["startup"])
 
-        ipython = IPython.start_ipython(argv=argv, config=config)
+        # Drop in our custom.css and custom.js
+        custom_static_folder = os.path.join(config_dir, "custom")
+        os.makedirs(custom_static_folder, exist_ok=True)
+        Path(os.path.join(custom_static_folder, "custom.css")).touch()
+        src_custom_js = os.path.join(os.path.dirname(__file__), "custom.js")
+        shutil.copy(src_custom_js, os.path.join(custom_static_folder, "custom.js"))
+
+        # It tries to load custom.js from /static/custom.js, not /custom/custom.js where the latter is correct.
+        # We work around this by having custom folder in static paths
+        config.NotebookApp.extra_template_paths = [custom_static_folder]
+
+        IPython.start_ipython(argv=argv, config=config)
 
     except Exception as e:
         import traceback ; traceback.print_exc()
