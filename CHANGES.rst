@@ -1,8 +1,8 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.1.12 (unreleased)
--------------------
+0.2 (2016-12-06)
+----------------
 
 - Upgraded to IPython 5.1 / Jupyter
 

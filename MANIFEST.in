@@ -1,3 +1,5 @@
+recursive-include pyramid_notebook *.js
+recursive-include pyramid_notebook *.ini
 exclude .gitignore
 exclude tests
 exclude tests/*
