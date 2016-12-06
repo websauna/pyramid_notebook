@@ -181,7 +181,7 @@ class NotebookManager:
         if self.is_running(name):
 
             last_context = self.get_context(name)
-            logger.info("Notebook context change detected for {}".format(name))
+            logger.info("Notebook context change detected for %s", name)
             if not self.is_same_context(context, last_context):
                 self.stop_notebook(name)
                 # Make sure we don't get race condition over context.json file
@@ -189,11 +189,17 @@ class NotebookManager:
             else:
                 return last_context, False
 
+        err_log = os.path.join(self.get_work_folder(name), "notebook.stderr.log")
         logger.info("Launching new Notebook named %s, context is %s", name, context)
-        logger.info("Notebook log is %s/notebook.stderr.log", self.get_work_folder(name))
+        logger.info("Notebook log is %s", err_log)
         self.start_notebook(name, context)
         time.sleep(1)
-        return self.get_context(name), True
+        context = self.get_context(name)
+        if "notebook_name" not in context:
+            # Failed to launch within timeout
+            raise RuntimeError("Failed to launch IPython Notebook, see {}".format(err_log))
+
+        return context, True
 
 
 

@@ -92,7 +92,7 @@ def create_named_notebook(fname, context):
     from nbformat import v4 as nbf
 
     # Courtesy of http://nbviewer.ipython.org/gist/fperez/9716279
-    text = "Welcome to *pyramid_notebook!* -Mikko, https://opensourcehacker.com"
+    text = "Welcome to *pyramid_notebook!* Use *File* *>* *Shutdown* to close this."
     cells = [nbf.new_markdown_cell(text)]
 
     greeting = context.get("greeting")
