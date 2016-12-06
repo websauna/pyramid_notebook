@@ -27,12 +27,14 @@ def test_notebook_template(web_server, browser):
     # Proxied notebook loads up
     browser.visit("http://username:password@localhost:{}/shell1".format(web_server["port"]))
     time.sleep(3)
-    assert b.find_by_css("#pyramid_notebook_logo")
+    assert b.is_element_present_by_css("#shutdown")  # Our custom shutdown command
 
-    # Back to the home
-    b.find_by_css("#pyramid_notebook_shutdown").click()
-    time.sleep(3)
-    assert b.is_text_present("pyramid_notebook test application")
+    # File menu
+    b.find_by_css(".dropdown a")[0].click()
+
+    # Shutdown and Back to the home
+    assert b.is_element_visible_by_css("#shutdown")
+    b.find_by_css("#shutdown").click()
 
 
 def hacker_typing(browser, spinter_selection, code):
@@ -76,8 +78,12 @@ def test_add_context_variables(web_server, browser):
     time.sleep(0.5)
     assert b.is_text_present("Output of a + b is foobar")
 
-    # Back to the home
-    b.find_by_css("#pyramid_notebook_shutdown").click()
+    # File menu
+    b.find_by_css(".dropdown a")[0].click()
+
+    # Shutdown and Back to the home
+    assert b.is_element_visible_by_css("#shutdown")
+    b.find_by_css("#shutdown").click()
 
     # There should be alert "Do you really wish to leave notebook?"
     time.sleep(0.5)
