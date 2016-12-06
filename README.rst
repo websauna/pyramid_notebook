@@ -1,4 +1,4 @@
-Embed IPython Notebook shell on your Pyramid web site and start through-the-browser Python shell with a single click.
+pyramid_notebook embeds IPython Notebook shell on your Pyramid web site. Start a powerful through-the-browser Python shell with a single click.
 
 `IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://trypyramid.com>`_.
 
@@ -25,7 +25,7 @@ Embed IPython Notebook shell on your Pyramid web site and start through-the-brow
     :alt: Supported Python versions
 
 +-----------+-----------+
-| |cov|     ||downloads||
+|           ||downloads||
 +-----------+-----------+
 | |ci|      | |license| |
 +-----------+-----------+
@@ -39,9 +39,9 @@ Embed IPython Notebook shell on your Pyramid web site and start through-the-brow
 Benefits
 ========
 
-* Easy access: All through web browser, no additional software installation needed.
+* Easy access: Get powerful shell through a web browser, no additional software installations needed.
 
-* Automatic data sources: Populate Notebook with variables and data depending where the user clicks the shell open.
+* Automatic default variables: Populate Notebook with variables and data depending on the page where you have a shell button.
 
 * Authentication integration: use the same credentials as you use for the site administration. Each Pyramid user gets his/her own IPython Notebook process.
 
