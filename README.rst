@@ -34,10 +34,7 @@ Embed IPython Notebook shell on your Pyramid web site and start through-the-brow
 
 .. contents:: :local:
 
-
-.. note ::
-
-    The current version has not been updated from IPython 3.0 to IPython 4.0 (Jupyter) yet.
+.. image :: https://bytebucket.org/miohtama/pyramid_notebook/raw/6d8df85c63d1434e46644d000e8809192e9dc4ed/docs/production_deployment.png
 
 Benefits
 ========
