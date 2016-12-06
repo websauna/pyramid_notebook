@@ -2,6 +2,8 @@ pyramid_notebook embeds IPython Notebook shell on your Pyramid web site. Start a
 
 `IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://trypyramid.com>`_.
 
+.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/animation.gif
+
 .. |ci| image:: https://travis-ci.org/websauna/pyramid_notebook.svg
     :target: https://travis-ci.org/websauna/pyramid_notebook
 
@@ -33,8 +35,6 @@ pyramid_notebook embeds IPython Notebook shell on your Pyramid web site. Start a
 +-----------+-----------+
 
 .. contents:: :local:
-
-.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/animation.gif
 
 Benefits
 ========
