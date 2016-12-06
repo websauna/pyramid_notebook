@@ -28,7 +28,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/miohtama/pyramid_notebook ',
+    url='https://github.com/websauna/pyramid_notebook',
 
     # Author details
     author='Mikko Ohtamaa',
@@ -43,7 +43,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -54,8 +54,8 @@ setup(
         'License :: OSI Approved :: MIT License',
 
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Framework :: Pyramid',
         'Framework :: IPython',
     ],
@@ -80,7 +80,7 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
-        'test': ['codecov', 'pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov"],
+        'test': ['codecov', 'pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov", "selenium<3"],
         'uwsgi': ['uwsgi', 'PasteDeploy', 'ws4py']
     },
 

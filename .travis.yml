@@ -35,10 +35,12 @@ before_script:
   - tar -xjf /tmp/firefox-45.0.tar.bz2 --directory /tmp
   - export PATH="/tmp/firefox:$PATH"
   - echo "Using firefox version `firefox --version`"
-  - psql -c 'create database websauna_test;' -U postgres
   - pip install -U pip
   - pip install -e .[test]
 
 script:
+  - pip freeze
   - py.test tests --ini=pyramid_notebook/demo/development.ini
+
+
 

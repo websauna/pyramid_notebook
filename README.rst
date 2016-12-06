@@ -1,9 +1,9 @@
 Embed IPython Notebook shell on your Pyramid web site and start through-the-browser Python shell with a single click.
 
-`IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://www.pylonsproject.org/projects/pyramid/about>`_.
+`IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://trypyramid.com>`_.
 
-.. |ci| image:: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/status.png
-    :target: https://drone.io/bitbucket.org/miohtama/pyramid_notebook/latest
+.. |ci| image:: https://travis-ci.org/websauna/pyramid_notebook.svg
+    :target: https://travis-ci.org/websauna/pyramid_notebook
 
 .. |cov| image:: https://codecov.io/bitbucket/miohtama/pyramid_notebook/coverage.svg?branch=master
     :target: https://codecov.io/bitbucket/miohtama/pyramid_notebook?branch=master
