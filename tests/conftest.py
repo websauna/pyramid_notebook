@@ -1,6 +1,7 @@
 """Functional testing with WSGI server."""
 
 
+import logging
 import threading
 import time
 from wsgiref.simple_server import make_server
@@ -14,6 +15,9 @@ from pyramid.paster import setup_logging
 import pytest
 from webtest import TestApp
 
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def pytest_addoption(parser):

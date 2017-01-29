@@ -513,6 +513,8 @@ Running manual instance::
 
     pserve pyramid_notebook/demo/development.ini --reload
 
+Username is ``username`` and password ``password``.
+
 Running tests::
 
     py.test tests --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini
@@ -546,7 +548,7 @@ You can manually launch the process to see any errors from IPython Notebook star
 
 Run ``test_start_stop`` test and capture log output in stdout::
 
-    py.test tests --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -k test_start_stop
+    py.test tests --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_start_stop
     ...
     INFO:pyramid_notebook.notebookmanager:Running notebook command: /Users/mikko/code/trees/venv/bin/python3.4 /Users/mikko/code/trees/pyramid_notebook/pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40007 60
 

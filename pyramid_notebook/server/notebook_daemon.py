@@ -196,6 +196,12 @@ def _run_notebook(foreground=False):
         config.NotebookApp.allow_origin = context.get("allow_origin", "http://localhost:{}/".format(port))
         config.NotebookApp.extra_template_paths = context.get("extra_template_paths", [])
 
+        # Password is disabled when through through proxying as it is handled by the proxy Pyramid app
+        config.NotebookApp.password_required = False
+        config.NotebookApp.password = ""
+        config.NotebookApp.token = ""
+
+
         if "websocket_url" in context:
             websocket_url = context.get("websocket_url", "http://localhost:{}/".format(port))
             config.NotebookApp.websocket_url = websocket_url

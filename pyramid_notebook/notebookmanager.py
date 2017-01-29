@@ -91,6 +91,7 @@ class NotebookManager:
         cmd = [str(arg) for arg in cmd]
 
         logger.info("Running notebook command: %s", " ".join(cmd))
+        # print("XXX - DEBUG - Running notebook command:", " ".join(cmd))
 
         # Add support for traceback dump on stuck
         env = os.environ.copy()
@@ -195,6 +196,7 @@ class NotebookManager:
         err_log = os.path.join(self.get_work_folder(name), "notebook.stderr.log")
         logger.info("Launching new Notebook named %s, context is %s", name, context)
         logger.info("Notebook log is %s", err_log)
+
         self.start_notebook(name, context)
         time.sleep(1)
         context = self.get_context(name)

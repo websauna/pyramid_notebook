@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import random
+import sys
 
 from pyramid_notebook.notebookmanager import NotebookManager
 from selenium.webdriver.common.keys import Keys
@@ -11,7 +12,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 NOTEBOOK_FOLDER = os.path.join("/tmp", "pyramid_notebook_tests")
 os.makedirs(NOTEBOOK_FOLDER, exist_ok=True)
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 
 USER = "test{}".format(random.randint(0, 1000))
 

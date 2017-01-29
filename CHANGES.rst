@@ -4,7 +4,7 @@ Changelog for pyramid_notebook
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fixed unnecessary "Enter token" prompt with the latest Jupyter Notebook versions
 
 
 0.2 (2016-12-06)
