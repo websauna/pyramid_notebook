@@ -101,8 +101,6 @@ def web_server(request, ini_settings):
 
     assert server.srv is not None, "Could not start the test web server"
 
-    app = TestApp(app)
-
     def teardown():
         server.quit()
 
