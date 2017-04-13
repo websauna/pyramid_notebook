@@ -487,7 +487,7 @@ If the startup script does not populate your Notebook with default variables as 
 
 * ``print(gocals())`` to see what global variables are set
 
-* Manually execute startup script inside IPython Notebook, e.g. ``exec(open("/private/tmp/pyramid_notebook/YOURUSERNAMEHERE/.ipython/profile_default/startup/startup.py").read())``
+* Manually execute startup script inside IPython Notebook, e.g. ``exec(open("/tmp/pyramid_notebook/user-1/.jupyter/profile_default/startup/startup.py ").read())`` (check the actual path by exploring ``/tmp/pyramid_notebook`` on your local filesystem).
 
 Development
 ===========
