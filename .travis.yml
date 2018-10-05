@@ -1,7 +1,7 @@
 language: python
 
 addons:
-  firefox: "45.0"
+  firefox: latest
 
 services:
   - postgresql
@@ -24,16 +24,11 @@ cache:
 install:
   - travis_retry pip install tox
 
-# http://stackoverflow.com/questions/39279651/connection-refused-when-running-selenium-tests-in-marionette
-#  - npm install -g geckodriver
-
-# https://docs.travis-ci.com/user/gui-and-headless-browsers/
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-  - tar -xjf /tmp/firefox-45.0.tar.bz2 --directory /tmp
-  - export PATH="/tmp/firefox:$PATH"
+  - "export MOZ_HEADLESS=1"
   - echo "Using firefox version `firefox --version`"
   - pip install -U pip
   - pip install -e .[test]
@@ -41,6 +36,3 @@ before_script:
 script:
   - pip freeze
   - py.test tests --ini=pyramid_notebook/demo/development.ini
-
-
-
