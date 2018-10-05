@@ -49,7 +49,9 @@ setup(
     ],
     extras_require={
         'dev': [
-            'check-manifest'
+            'flake8',
+            'pyroma',
+            'zest.releaser[recommended]',
         ],
         'test': [
             'pytest-cov',
