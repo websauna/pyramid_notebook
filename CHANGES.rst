@@ -4,7 +4,7 @@ Changelog for pyramid_notebook
 0.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Upgraded to IPython 7.0.1 / Jupyter.
 
 
 0.2.1 (2017-01-29)
@@ -18,7 +18,7 @@ Changelog for pyramid_notebook
 
 - Upgraded to IPython 5.1 / Jupyter
 
-- Better error messages in various situtations
+- Better error messages in various situations
 
 - Add custom shutdown command by customizing IPython toolbar menu
 

@@ -72,15 +72,32 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['port-for', "ipython[notebook]>=5.0", 'pyramid', 'daemonocle>=1.0.1', 'ws4py'],
+    install_requires=[
+        'port-for',
+        "ipython[notebook]>=7.0.1",
+        'pyramid',
+        'daemonocle>=1.0.1',
+        'ws4py'
+    ],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
     # for example:
     # $ pip install -e .[dev,test]
     extras_require={
-        'dev': ['check-manifest'],
-        'test': ['codecov', 'pytest', 'pyramid_jinja2', 'paste', "pytest-splinter", "webtest", "pytest-cov", "selenium<3"],
+        'dev': [
+            'check-manifest'
+        ],
+        'test': [
+            'codecov',
+            'pytest',
+            'pyramid_jinja2',
+            'paste',
+            "pytest-splinter",
+            "webtest",
+            "pytest-cov",
+            "selenium>3"
+        ],
         'uwsgi': ['uwsgi', 'PasteDeploy', 'ws4py']
     },
 

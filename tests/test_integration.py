@@ -86,13 +86,5 @@ def test_add_context_variables(web_server, browser):
     assert b.is_element_visible_by_css("#shutdown")
     b.find_by_css("#shutdown").click()
 
-    # There should be alert "Do you really wish to leave notebook?"
-    time.sleep(0.5)
-    alert = b.driver.switch_to_alert()
-    alert.accept()
-
     time.sleep(1)
     assert b.is_text_present("pyramid_notebook test application")
-
-
-
