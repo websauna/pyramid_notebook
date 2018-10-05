@@ -86,4 +86,6 @@ def test_add_context_variables(web_server, browser):
     assert b.is_element_visible_by_css("#shutdown")
     b.find_by_css("#shutdown").click()
 
-    assert b.is_text_present("pyramid_notebook test application", wait_time=10)
+    # For Python 3.5, this test fails id wait_time is low
+    wait_time = 10 if sys.version_info >= (3, 6) else 60
+    assert b.is_text_present("pyramid_notebook test application", wait_time=wait_time)
