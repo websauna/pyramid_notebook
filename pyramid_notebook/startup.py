@@ -1,6 +1,6 @@
 """Helpers to set up Notebook startup imports and contexts."""
+# Standard Library
 import os
-
 
 
 #: The splash text displayed at the notebook top. TODO: WSGI application description in Pyramid docs is bad, find better one.
@@ -78,10 +78,9 @@ def make_startup(notebook_context, config_file, bootstrap_py=PYRAMID_BOOSTRAP, b
 
     try:
         # Commonly used with Pyramid applications
-        import transaction
-        add_script(nc,  "import transaction\n")
+        import transaction  # noQA
+        add_script(nc, "import transaction\n")
         add_greeting(nc, "* **transaction** - Zope [transaction manager](http://zodb.readthedocs.org/en/latest/transactions.html), e.g. `transaction.commit()`")
-
     except ImportError:
         pass
 
@@ -128,7 +127,3 @@ def add_greeting(nc, line):
     if not nc["greeting"].endswith("\n"):
         nc["greeting"] += "\n"
     nc["greeting"] += line + "\n"
-
-
-
-

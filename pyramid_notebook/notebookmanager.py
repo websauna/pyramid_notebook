@@ -1,11 +1,14 @@
-import port_for
+# Standard Library
 import logging
-import subprocess
 import os
+import subprocess
 import sys
 import time
 
-from .server import comm
+# Third Party
+import port_for
+
+from pyramid_notebook.server import comm
 
 
 logger = logging.getLogger(__name__)
@@ -122,7 +125,7 @@ class NotebookManager:
             return None
         return context
 
-    def start_notebook(self, name, context:dict, fg=False):
+    def start_notebook(self, name, context: dict, fg=False):
         """Start new IPython Notebook daemon.
 
         :param name: The owner of the Notebook will be *name*. He/she gets a new Notebook content folder created where all files are placed.
@@ -140,15 +143,15 @@ class NotebookManager:
         context["http_port"] = http_port
 
         # We can't proxy websocket URLs, so let them go directly through localhost or have front end server to do proxying (nginx)
-        if not "websocket_url" in context:
+        if "websocket_url" not in context:
             context["websocket_url"] = "ws://localhost:{port}".format(port=http_port)
 
         if "{port}" in context["websocket_url"]:
-            # Do port substituion for the websocket URL
-             context["websocket_url"] =  context["websocket_url"].format(port=http_port)
+            # Do port substitution for the websocket URL
+            context["websocket_url"] = context["websocket_url"].format(port=http_port)
 
         pid = self.get_pid(name)
-        assert not "terminated" in context
+        assert "terminated" not in context
 
         comm.set_context(pid, context)
 

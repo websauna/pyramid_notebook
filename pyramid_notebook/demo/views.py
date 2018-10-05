@@ -1,14 +1,17 @@
+# Pyramid
 from pyramid import httpexceptions
+from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPUnauthorized
 from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.security import forget
-from pyramid.view import view_config, forbidden_view_config
-from pyramid.httpexceptions import HTTPUnauthorized, HTTPFound
+from pyramid.view import forbidden_view_config
+from pyramid.view import view_config
 
-
-from pyramid_notebook.views import launch_notebook
-from pyramid_notebook.views import shutdown_notebook as _shutdown_notebook
-from pyramid_notebook.views import notebook_proxy as _notebook_proxy
+# Pyramid Notebook
 from pyramid_notebook import startup
+from pyramid_notebook.views import launch_notebook
+from pyramid_notebook.views import notebook_proxy as _notebook_proxy
+from pyramid_notebook.views import shutdown_notebook as _shutdown_notebook
 
 
 SCRIPT = """
@@ -19,7 +22,7 @@ def fn():
     print("buu")
 """
 
-GREETING="""
+GREETING = """
 * **a** - varible a
 * **b** - variable b
 * **fn** - test function
@@ -33,7 +36,6 @@ def home(request):
 
 @view_config(route_name="notebook_proxy", renderer="templates/login.html")
 def notebook_proxy(request):
-
     # Make sure we have a logged in user
     auth = request.registry.queryUtility(IAuthenticationPolicy)
     username = auth.authenticated_userid(request)
@@ -42,13 +44,11 @@ def notebook_proxy(request):
         # This will trigger HTTP Basic Auth dialog, as per basic_challenge handler below
         raise httpexceptions.HTTPForbidden("You need to be logged in. Hint: user / password")
 
-
     return _notebook_proxy(request, username)
 
 
 @view_config(route_name="shell1")
 def shell1(request):
-
     # Make sure we have a logged in user
     auth = request.registry.queryUtility(IAuthenticationPolicy)
     username = auth.authenticated_userid(request)
@@ -66,7 +66,6 @@ def shell1(request):
 
 @view_config(route_name="shell2")
 def shell2(request):
-
     # Make sure we have a logged in user
     auth = request.registry.queryUtility(IAuthenticationPolicy)
     username = auth.authenticated_userid(request)
@@ -86,7 +85,6 @@ def shell2(request):
 
 @view_config(route_name="shutdown_notebook")
 def shutdown_notebook(request):
-
     # Make sure we have a logged in user
     auth = request.registry.queryUtility(IAuthenticationPolicy)
     username = auth.authenticated_userid(request)

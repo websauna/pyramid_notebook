@@ -6,11 +6,12 @@
 
 
 """
+# Standard Library
 import datetime
 import json
-import shutil
-import os
 import logging
+import os
+import shutil
 
 
 logger = logging.getLogger(__name__)
@@ -91,5 +92,3 @@ def clear_context(pid_file):
     data = {}
     data["terminated"] = str(datetime.datetime.now(datetime.timezone.utc))
     set_context(pid_file, data)
-
-

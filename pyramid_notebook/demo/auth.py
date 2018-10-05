@@ -1,10 +1,15 @@
+# Standard Library
 import binascii
 
+# Pyramid
+from pyramid.authentication import AuthTktAuthenticationPolicy  # noQA
+from pyramid.security import Authenticated
+from pyramid.security import Everyone
+
+# Third Party
 from paste.httpheaders import AUTHORIZATION
 from paste.httpheaders import WWW_AUTHENTICATE
 
-from pyramid.security import Everyone
-from pyramid.security import Authenticated
 
 def _get_basicauth_credentials(request):
     authorization = AUTHORIZATION(request.environ)
@@ -24,6 +29,7 @@ def _get_basicauth_credentials(request):
         return {'login': login, 'password': password}
 
     return None
+
 
 class BasicAuthenticationPolicy(object):
     """ A :app:`Pyramid` :term:`authentication policy` which
@@ -84,7 +90,6 @@ class BasicAuthenticationPolicy(object):
         head = WWW_AUTHENTICATE.tuples('Basic realm="%s"' % self.realm)
         return head
 
-from pyramid.authentication import AuthTktAuthenticationPolicy
 
 def groupfinder(userid, request):
     user = request.user

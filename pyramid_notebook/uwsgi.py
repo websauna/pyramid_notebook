@@ -1,12 +1,19 @@
 """UWSGI websocket proxy."""
-from urllib.parse import urlparse, urlunparse
+# Standard Library
 import logging
 import time
+from urllib.parse import urlparse
+from urllib.parse import urlunparse
 
-import uwsgi
+# Pyramid
 from pyramid import httpexceptions
+
+# Third Party
 from ws4py import WS_VERSION
 from ws4py.client import WebSocketBaseClient
+
+# Pyramid Notebook
+import uwsgi
 
 
 #: HTTP headers we need to proxy to upstream websocket server when the Connect: upgrade is performed
@@ -33,7 +40,7 @@ class ProxyClient(WebSocketBaseClient):
             # Origin is proxyed from the downstream server, don't set it twice
             # ('Origin', self.url),
             ('Sec-WebSocket-Version', str(max(WS_VERSION)))
-            ]
+        ]
 
         if self.protocols:
             headers.append(('Sec-WebSocket-Protocol', ','.join(self.protocols)))
@@ -87,7 +94,7 @@ class ProxyClient(WebSocketBaseClient):
 
                 self.opened()
 
-                logger.debug("Asking for upstream msg")
+                logger.debug("Asking for upstream msg {s}".format(s=s))
                 try:
                     bytes = self.sock.recv(self.reading_buffer_size)
                     if bytes:

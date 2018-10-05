@@ -1,12 +1,12 @@
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
-
-# To use a consistent encoding
+# Standard Library
 from codecs import open
 from os import path
 
-here = path.abspath(path.dirname(__file__))
+from setuptools import find_packages
+from setuptools import setup
 
+
+here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -14,7 +14,6 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 with open(path.join(here, 'CHANGES.rst'), encoding='utf-8') as f:
     long_description += "\n" + f.read()
-
 
 setup(
     name='pyramid_notebook',
@@ -45,13 +44,18 @@ setup(
         'daemonocle>=1.0.1',
         'port-for',
         'pyramid',
+        'sqlalchemy',
         'ws4py'
     ],
     extras_require={
         'dev': [
-            'check-manifest'
+            'flake8',
+            'flake8-isort',
+            'pyroma',
+            'zest.releaser[recommended]',
         ],
         'test': [
+            'flaky',
             'pytest-cov',
             'pytest-splinter',
             'selenium>3',

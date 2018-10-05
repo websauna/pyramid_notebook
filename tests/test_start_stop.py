@@ -1,8 +1,10 @@
+# Standard Library
 import logging
 import os
-import time
 import sys
+import time
 
+# Pyramid Notebook
 from pyramid_notebook.notebookmanager import NotebookManager
 
 
@@ -68,5 +70,3 @@ def test_context_change():
     m.stop_notebook(USER)
     time.sleep(1)
     assert not m.is_running(USER)
-
-

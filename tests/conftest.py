@@ -1,19 +1,21 @@
 """Functional testing with WSGI server."""
 
 
+# Standard Library
 import logging
+import os
 import threading
 import time
-from wsgiref.simple_server import make_server
 from urllib.parse import urlparse
-import os
+from wsgiref.simple_server import make_server
 
+# Pyramid
 from pyramid.paster import get_appsettings
 from pyramid.paster import setup_logging
 
-
+# Third Party
 import pytest
-from webtest import TestApp
+from webtest import TestApp  # noQA
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +37,6 @@ def ini_settings(request):
     config = get_appsettings(config_uri)
 
     return config_uri, config
-
 
 
 class ServerThread(threading.Thread):
@@ -62,7 +63,7 @@ class ServerThread(threading.Thread):
         self.srv = make_server(domain, int(port), self.app)
         try:
             self.srv.serve_forever()
-        except:
+        except Exception as e:
             # We are a background thread so we have problems to interrupt tests in the case of error
             import traceback
             traceback.print_exc()
@@ -76,14 +77,12 @@ class ServerThread(threading.Thread):
             self.srv.shutdown()
 
 
-
 @pytest.fixture(scope='session')
 def web_server(request, ini_settings):
     """Creates a test web server which does not give any CSS and JS assets to load.
 
     Because the server life-cycle is one test session and we run with different settings we need to run a in different port.
     """
-
     from pyramid_notebook import demo
 
     config_uri, settings = ini_settings
@@ -115,6 +114,7 @@ def pyramid_request(request):
     from pyramid import testing
 
     testing.setUp()
+
     def teardown():
         testing.tearDown()
 

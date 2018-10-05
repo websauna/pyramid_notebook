@@ -7,12 +7,37 @@ services:
   - postgresql
   - redis-server
 
+env: # Without this, allow_failures will not work
 matrix:
+    fast_finish: true
     include:
         - python: 3.5
           env:
           - PYTHON_VERSION=python3.5
           - TOXENV=py35
+        - python: 3.6
+          env:
+          - PYTHON_VERSION=python3.6
+          - TOXENV=py36
+        - python: 3.7
+          env:
+          - PYTHON_VERSION=python3.7
+          - TOXENV=py37
+          dist: xenial
+          sudo: true
+        - python: 3.8-dev
+          env:
+          - PYTHON_VERSION=python3.8
+          - TOXENV=py38
+          dist: xenial
+          sudo: true
+        - python: 3.6
+          env:
+          - PYTHON_VERSION=python3.6
+          - TOXENV=style
+    allow_failures:
+        - env: TOXENV=py38
+        - env: TOXENV=style
 
 # http://stackoverflow.com/a/19460794/315168
 cache:
@@ -29,6 +54,7 @@ before_install:
 
 install:
   - travis_retry pip install tox
+  - pip install -U pip
 
 before_script:
   - "export MOZ_HEADLESS=1"
@@ -36,9 +62,9 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
   - echo "Using firefox version `firefox --version`"
-  - pip install -U pip
-  - pip install -e .[test]
 
 script:
-  - pip freeze
-  - py.test tests --ini=pyramid_notebook/demo/development.ini
+  - tox -- --ini=pyramid_notebook/demo/development.ini --splinter-headless=true --debug
+
+after_success:
+  - .tox/$TOXENV/bin/pip freeze
