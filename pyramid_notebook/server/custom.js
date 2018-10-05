@@ -1,24 +1,23 @@
-define([
+define(
+  [
   'base/js/namespace',
-  'base/js/events',
+  'base/js/promises',
   'base/js/utils'
-], function(IPython, events, utils) {
-    "use strict";
+  ], function (Jupyter, promises, utils) {
+    promises.app_initialized.then(function (appname) {
+      if (appname === 'NotebookApp') {
+        var base_url = utils.get_body_data('base-url');
 
-    events.on('app_initialized.NotebookApp', function() {
+                // Remove default close item
+                $("#close_and_halt").remove();
 
-      var base_url = utils.get_body_data('base-url');
+                // Add customized close item
+                $("#file_menu").append('<li id="shutdown" title="Shutdown and return to Pyramid"><a href="#">Shutdown</a></li>');
 
-      // Remove default close item
-      $("#kill_and_exit").remove();
-
-      // Add customized close item
-      $("#file_menu").append('<li id="shutdown" title="Shutdown and return to Pyramid"><a href="#">Shutdown</a></li>');
-
-      $(document).on("click", "#shutdown", function() {
-        console.log(base_url);
-        window.location.href = base_url + "shutdown";
-      });
-
-   });
-});
+                $(document).on("click", "#shutdown", function () {
+                  console.log(base_url);
+                  window.location.href = base_url + "shutdown";
+                });
+              }
+            });
+  });
