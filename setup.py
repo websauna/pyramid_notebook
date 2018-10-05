@@ -54,6 +54,7 @@ setup(
             'zest.releaser[recommended]',
         ],
         'test': [
+            'flaky',
             'pytest-cov',
             'pytest-splinter',
             'selenium>3',

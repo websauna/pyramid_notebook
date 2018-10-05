@@ -5,6 +5,7 @@ import time
 import random
 import sys
 
+from flaky import flaky
 from pyramid_notebook.notebookmanager import NotebookManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -63,6 +64,7 @@ def hacker_typing(browser, spinter_selection, code):
     a.perform()
 
 
+@flaky(max_runs=3)
 def test_add_context_variables(web_server, browser):
     """We can perform meaningful calculations on variables set in startup.py"""
 
