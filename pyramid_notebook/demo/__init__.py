@@ -1,10 +1,13 @@
+# Standard Library
 import logging
-from pyramid.config import Configurator
+
+# Pyramid
 from pyramid.authentication import BasicAuthAuthenticationPolicy
+from pyramid.config import Configurator
 from pyramid.interfaces import IDebugLogger
 
-from . import views
-from . import auth
+from pyramid_notebook.demo import auth
+from pyramid_notebook.demo import views
 
 
 def mycheck(username, password, request):
@@ -43,5 +46,3 @@ def main(global_config, **settings):
     config.registry.registerUtility(pyramid_debug_logger, IDebugLogger)
 
     return config.make_wsgi_app()
-
-

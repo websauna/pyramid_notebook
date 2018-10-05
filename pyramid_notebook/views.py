@@ -1,12 +1,17 @@
+# Standard Library
 import logging
 import os
+
+# Pyramid
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPInternalServerError
 from pyramid.util import DottedNameResolver
 
+# Pyramid Notebook
 from pyramid_notebook.notebookmanager import NotebookManager
 from pyramid_notebook.proxy import WSGIProxyApplication
-from pyramid_notebook.utils import make_dict_hash, route_to_alt_domain
+from pyramid_notebook.utils import make_dict_hash
+from pyramid_notebook.utils import route_to_alt_domain
 
 
 logger = logging.getLogger(__name__)
@@ -85,7 +90,6 @@ def prepare_notebook_context(request, notebook_context):
     if "context_hash" not in notebook_context:
         notebook_context["context_hash"] = make_dict_hash(notebook_context)
 
-
     print(notebook_context)
 
 
@@ -100,7 +104,7 @@ def launch_on_demand(request, username, notebook_context):
         raise RuntimeError("Setting missing: pyramid_notebook.notebook_folder")
 
     kill_timeout = settings.get("pyramid_notebook.kill_timeout", None)
-    if not kill_timeout :
+    if not kill_timeout:
         raise RuntimeError("Setting missing: pyramid_notebook.kill_timeout")
 
     kill_timeout = int(kill_timeout)
@@ -119,7 +123,7 @@ def launch_on_demand(request, username, notebook_context):
         raise RuntimeError("Setting missing: pyramid_notebook.notebook_folder")
 
     kill_timeout = settings.get("pyramid_notebook.kill_timeout", None)
-    if not kill_timeout :
+    if not kill_timeout:
         raise RuntimeError("Setting missing: pyramid_notebook.kill_timeout")
 
     kill_timeout = int(kill_timeout)
@@ -129,7 +133,7 @@ def launch_on_demand(request, username, notebook_context):
     # Configure websockets
     # websocket_url = settings.get("pyramid_notebook.websocket_url")
     # assert websocket_url, "pyramid_notebook.websocket_url setting missing"
-    #assert websocket_url.startswith("ws:/") or websocket_url.startswith("wss:/")
+    # assert websocket_url.startswith("ws:/") or websocket_url.startswith("wss:/")
 
     if request.registry.settings.get("pyramid_notebook.websocket_proxy", ""):
         websocket_url = route_to_alt_domain(request, request.host_url)
@@ -137,7 +141,7 @@ def launch_on_demand(request, username, notebook_context):
         notebook_context["websocket_url"] = websocket_url
     else:
         # Connect websockets directly to localhost notebook server, do not try to proxy them
-        websocket_url =  "ws://localhost:{port}/notebook/"
+        websocket_url = "ws://localhost:{port}/notebook/"
 
     # Record the hash of the current parameters, so we know if this user accesses the notebook in this or different context
     if "context_hash" not in notebook_context:
@@ -161,11 +165,10 @@ def notebook_proxy(request, username):
     if not notebook_info:
         raise HTTPInternalServerError("Apparently IPython Notebook daemon process is not running for {}".format(username))
 
-    if not "http_port" in notebook_info:
+    if 'http_port' not in notebook_info:
         raise RuntimeError("Notebook terminated prematurely before managed to tell us its HTTP port")
 
     return proxy_it(request, notebook_info["http_port"])
-
 
 
 def launch_notebook(request, username, notebook_context):

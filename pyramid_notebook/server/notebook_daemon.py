@@ -1,22 +1,26 @@
 """Daemonized Python Notebook process with pre-allocated port, kill timeout and extra argument passing through JSON file."""
-import logging
-import shutil
-
-import time
-from nbformat.v4.nbjson import JSONWriter
-import io
-import os
+# Standard Library
 import atexit
+import faulthandler
+import io
+import logging
+import os
+import shutil
 import signal
 import sys
-import faulthandler
+import time
 from pathlib import Path
 
+# Third Party
 import daemonocle
-from daemonocle import expose_action
-from daemonocle import DaemonError
 import psutil
+from daemonocle import DaemonError
+from daemonocle import expose_action
+from nbformat.v4.nbjson import JSONWriter
+
+# Pyramid Notebook
 from pyramid_notebook.server import comm
+
 
 try:
     import coverage
@@ -83,6 +87,7 @@ class NotebookDaemon(daemonocle.Daemon):
 
         self._emit_ok()
 
+
 def create_named_notebook(fname, context):
     """Create a named notebook if one doesn't exist."""
 
@@ -117,7 +122,7 @@ def run_notebook(foreground=False):
 
     try:
         _run_notebook(foreground)
-    except:
+    except Exception as e:
         import traceback
         traceback.print_exc(file=sys.stderr)
         raise
@@ -201,7 +206,6 @@ def _run_notebook(foreground=False):
         config.NotebookApp.password = ""
         config.NotebookApp.token = ""
 
-
         if "websocket_url" in context:
             websocket_url = context.get("websocket_url", "http://localhost:{}/".format(port))
             config.NotebookApp.websocket_url = websocket_url
@@ -229,7 +233,8 @@ def _run_notebook(foreground=False):
         IPython.start_ipython(argv=argv, config=config)
 
     except Exception as e:
-        import traceback ; traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         sys.exit(str(e))
 
 
@@ -238,7 +243,6 @@ def clear_context(*args):
 
 
 if __name__ == '__main__':
-
     if len(sys.argv) == 1:
         sys.exit("Usage: {} start|stop|status|fg pid_file [work_folder] [notebook port] [kill timeout in seconds] *extra_args")
 

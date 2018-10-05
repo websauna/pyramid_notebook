@@ -1,14 +1,19 @@
 """Make sure scheisse holds on the wall."""
+# Standard Library
 import logging
 import os
-import time
 import random
 import sys
+import time
 
+# Third Party
 from flaky import flaky
-from pyramid_notebook.notebookmanager import NotebookManager
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+
+# Pyramid Notebook
+from pyramid_notebook.notebookmanager import NotebookManager  # noQA
+
 
 NOTEBOOK_FOLDER = os.path.join("/tmp", "pyramid_notebook_tests")
 os.makedirs(NOTEBOOK_FOLDER, exist_ok=True)

@@ -1,4 +1,4 @@
-
+"""Pyramid Notebook."""
 
 
 def includeme(config):

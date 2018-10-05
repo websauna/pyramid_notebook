@@ -1,8 +1,11 @@
 # Courtesy of https://bitbucket.org/dahlia/wsgi-proxy/raw/02ab0dfa8e0078add268e91426e1cc1a52664cf5/wsgi_proxy/__init__.py
 
+# Standard Library
 import http.client
 import logging
-from urllib.parse import urlparse, urlunsplit, urlunparse, unquote_plus
+from urllib.parse import unquote_plus
+from urllib.parse import urlparse
+from urllib.parse import urlunparse
 
 
 #: (:class:`frozenset`) The set of hop-by-hop headers.  All header names
@@ -55,7 +58,6 @@ def reconstruct_url(environ, port):
         pass
     else:
         url += '?' + query_string
-
 
     parsed = urlparse(url)
     replaced = parsed._replace(netloc="localhost:{}".format(port))
@@ -118,7 +120,7 @@ class WSGIProxyApplication:
 
                         # Fix extra = at end of JSON payload
                         if body.startswith("{") and body.endswith("}="):
-                            body = body[0:len(body)-1]
+                            body = body[0:len(body) - 1]
 
                     except Exception as e:
                         logger.exception(e)
@@ -196,4 +198,3 @@ class WSGIProxyApplication:
 
     def __call__(self, environ, start_response):
         return self.handler(environ, start_response)
-
