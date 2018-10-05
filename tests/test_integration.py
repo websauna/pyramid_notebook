@@ -86,5 +86,5 @@ def test_add_context_variables(web_server, browser):
     assert b.is_element_visible_by_css("#shutdown")
     b.find_by_css("#shutdown").click()
 
-    time.sleep(1)
+    time.sleep(3)
     assert b.is_text_present("pyramid_notebook test application")
