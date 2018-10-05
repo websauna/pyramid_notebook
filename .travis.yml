@@ -21,14 +21,20 @@ cache:
     - $HOME/.cache/pip
     - .tox
 
+before_install:
+  - wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz
+  - mkdir geckodriver
+  - tar -xzf geckodriver-v0.23.0-linux64.tar.gz -C geckodriver
+  - export PATH=$PATH:$PWD/geckodriver
+
 install:
   - travis_retry pip install tox
 
 before_script:
+  - "export MOZ_HEADLESS=1"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-  - "export MOZ_HEADLESS=1"
   - echo "Using firefox version `firefox --version`"
   - pip install -U pip
   - pip install -e .[test]
