@@ -1,8 +1,10 @@
-pyramid_notebook embeds IPython Notebook shell on your Pyramid web site. Start a powerful through-the-browser Python shell with a single click.
+================
+Pyramid Notebook
+================
+
+*pyramid_notebook* embeds IPython Notebook shell on your Pyramid web site. Start a powerful through-the-browser Python shell with a single click.
 
 `IPython Notebook <http://ipython.org/notebook.html>`_ is the de facto tool for researches, data analysts and software developers to perform visual and batch oriented tasks. *pyramid_notebook* puts the power of IPython Notebook inside of a `Pyramid website <http://trypyramid.com>`_.
-
-.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/animation.gif
 
 .. |ci| image:: https://travis-ci.org/websauna/pyramid_notebook.svg
     :target: https://travis-ci.org/websauna/pyramid_notebook
@@ -27,8 +29,6 @@ pyramid_notebook embeds IPython Notebook shell on your Pyramid web site. Start a
     :alt: Supported Python versions
 
 +-----------+-----------+
-|           ||downloads||
-+-----------+-----------+
 | |ci|      | |license| |
 +-----------+-----------+
 | |versions|| |latest|  |
@@ -47,6 +47,11 @@ Benefits
 
 * Rich user interface: Place the cursor with a mouse, use desktop shortcuts for line editing.
 
+How it works
+------------
+
+.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/animation.gif
+
 Use cases
 ---------
 
@@ -61,7 +66,7 @@ Prerequisites
 
 * `Pyramid web site <http://www.pylonsproject.org/projects/pyramid/about>`_ (can be easily extended to other web frameworks)
 
-* Python 3.4+
+* Python 3.5+
 
 * OSX, Linux
 
@@ -72,13 +77,13 @@ Demo
 
 * Checkout source code repository::
 
-    git clone https://miohtama@bitbucket.org/miohtama/pyramid_notebook.git
+    git clone https://github.com/websauna/pyramid_notebook.git
 
-* Create virtualenv for Python 3.4. Install dependencies::
+* Create virtualenv for Python 3.5. Install dependencies::
 
     cd pyramid_notebook
-    virtualenv --python=python3.4 venv
-    source venv/bin/activate
+    python3 -m venv env  # Create virtual environment
+    source env/bin/activate  # Activate virtual environment
     pip install requirements.txt
     python setup.py develop
 
@@ -88,7 +93,17 @@ Demo
 
 Then point your browser at `http://localhost:9999 <http://localhost:9999>`_.
 
-Try accounts is *user* / *password*, and *user2* / *password* respectively.
+Credentials for this demo are:
+
+    * User 1:
+
+        - username: *user*
+        - password: *password*
+
+    * User 2:
+
+        - username: *user2*
+        - password: *password*
 
 Installation
 ============
@@ -277,29 +292,26 @@ Example of what context information you can pass below::
         # http://ipython.org/ipython-doc/3/config/options/notebook.html
         "extra_template_paths": []
 
-        # The port where Notebook daemon is supposed to start listening to
-        "http_port",
-
         # Notebook daemon process id - filled it in by the daemon itself
-        "pid",
+        "pid": 1234,
 
         # Notebook daemon kill timeout in seconds - filled in by the the daemon itself after parsing command line arguments
-        "kill_timeout",
+        "kill_timeout": 5,
 
         # Bound localhost port for this notebook - filled in by the daemon itself after parsing command line arguments
-        "http_port",
+        "http_port": 9999,
 
         # Set Notebook HTTP Allow Origin header to tell where websockets are allowed to connect
-        "allow_origin"
+        "allow_origin": 'localhost:9999',
 
         # Override websocket URL
-        "websocket_url",
+        "websocket_url": 'ws://localhost:9998',
 
         # Path in URL where Notebook is proxyed, must match notebook_proxy() view
-        "notebook_path",
+        "notebook_path": '/notebook/',
 
         # Hash of this context. This is generated automatically from supplied context dictionary if not given. If the hash changes the notebook is restarted with new context data.
-        "context_hash",
+        "context_hash": 'foo',
     }
 
 
@@ -375,20 +387,20 @@ Architecture
 
 Each Pyramid user has a named Notebook process. Each Notebook process gets their own working folder, dynamically created upon the first lanch. Notebooks are managed by ``NotebookManager`` class which detects changes in notebook context and restarts the Notebook process for the user with a new context if needed.
 
-Notebook bind itselfs to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requests to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks. The proxy view is also responsible for starting a web server specific websocket proxy loop.
+Notebook bind itself to localhost ports. Pyramid view proxyes ``/notebook/`` HTTP requests to Notebook and first checks the HTTP request has necessary permissions by performing authentication and authorization checks. The proxy view is also responsible for starting a web server specific websocket proxy loop.
 
 Launched Notebook processes are daemonized and separated from the web server process. The communication between the web server and the daemon process happens through command line, PID file and context file (JSON dump of notebook context parameters, as described above).
 
 Local deployment
 ----------------
 
-.. image :: https://bytebucket.org/miohtama/pyramid_notebook/raw/6d8df85c63d1434e46644d000e8809192e9dc4ed/docs/localhost_deployment.png
+.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/localhost_deployment.png
 
 
 Production deployment
 ---------------------
 
-.. image :: https://bytebucket.org/miohtama/pyramid_notebook/raw/6d8df85c63d1434e46644d000e8809192e9dc4ed/docs/production_deployment.png
+.. image :: https://raw.githubusercontent.com/websauna/pyramid_notebook/master/docs/production_deployment.png
 
 
 Scalability
@@ -492,11 +504,11 @@ If the startup script does not populate your Notebook with default variables as 
 Development
 ===========
 
-* `Source code <https://bitbucket.org/miohtama/pyramid_notebook>`_
+* `Source code <https://github.com/websauna/pyramid_notebook>`_
 
-* `Issue tracker <https://bitbucket.org/miohtama/pyramid_notebook>`_
+* `Issue tracker <https://github.com/websauna/pyramid_notebook/issues>`_
 
-* `Documentation <https://bitbucket.org/miohtama/pyramid_notebook>`_
+* `Documentation <https://github.com/websauna/pyramid_notebook>`_
 
 Tests
 -----
@@ -550,11 +562,11 @@ Run ``test_start_stop`` test and capture log output in stdout::
 
     py.test tests --splinter-webdriver=chrome --splinter-make-screenshot-on-failure=false --ini=pyramid_notebook/demo/development.ini -s -k test_start_stop
     ...
-    INFO:pyramid_notebook.notebookmanager:Running notebook command: /Users/mikko/code/trees/venv/bin/python3.4 /Users/mikko/code/trees/pyramid_notebook/pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40007 60
+    INFO:pyramid_notebook.notebookmanager:Running notebook command: python ./pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40007 60
 
 You can::
 
-    /Users/mikko/code/trees/venv/bin/python3.4 /Users/mikko/code/trees/pyramid_notebook/pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40005 60
+    python ./pyramid_notebook/server/notebook_daemon.py start /tmp/pyramid_notebook_tests/testuser1/notebook.pid /tmp/pyramid_notebook_tests/testuser1 40005 60
 
 
 Related work
