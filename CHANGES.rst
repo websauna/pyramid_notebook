@@ -6,11 +6,9 @@ Changelog for pyramid_notebook
 
 - Upgraded to IPython 7.0.1 / Jupyter.
 
-- Add support to Python 3.6.
+- Add support to Python 3.6, 3.7 and 3.8
 
-- Add support to Python 3.7.
-
-- Add support to Python 3.8.
+- Remove support to Python 3.4.
 
 - Enforce Python style checks.
 
