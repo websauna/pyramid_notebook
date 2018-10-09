@@ -25,7 +25,7 @@ setup(
     author_email='mikko@opensourcehacker.com',
     license='MIT',
     classifiers=[
-        'Development Status :: 2 - Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'Topic :: System :: Shells',
