@@ -43,6 +43,7 @@ setup(
     install_requires=[
         "ipython[notebook]>=7.0.1",
         'daemonocle>=1.0.1',
+        'PasteDeploy',
         'port-for',
         'pyramid',
         'sqlalchemy',
@@ -52,22 +53,20 @@ setup(
         'dev': [
             'flake8',
             'flake8-isort',
-            'pyroma',
             'zest.releaser[recommended]',
         ],
         'test': [
+            'codecov',
             'flaky',
+            'paste',
+            'pyramid_jinja2',
+            'pytest',
             'pytest-cov',
             'pytest-splinter',
             'selenium>3',
             'webtest',
-            'codecov',
-            'paste',
-            'pyramid_jinja2',
-            'pytest',
         ],
         'uwsgi': [
-            'PasteDeploy',
             'uwsgi',
             'ws4py'
         ]
