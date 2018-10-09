@@ -1,5 +1,19 @@
-recursive-include pyramid_notebook *.js
-recursive-include pyramid_notebook *.ini
 exclude .gitignore
 exclude tests
 exclude tests/*
+include *.conf
+include *.rst
+include *.txt
+include .coveragerc
+include .isort.cfg
+include tox.ini
+include uwsgi-development.ini
+include uwsgi-under-nginx.ini
+include uwsgi.ini
+recursive-include docs *.gif
+recursive-include docs *.png
+recursive-include docs *.vpp
+recursive-include pyramid_notebook *.html
+recursive-include pyramid_notebook *.ini
+recursive-include pyramid_notebook *.js
+recursive-include screenshots *.txt
