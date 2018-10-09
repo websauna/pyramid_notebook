@@ -1,7 +1,7 @@
 Changelog for pyramid_notebook
 ==============================
 
-0.2.2 (unreleased)
+0.3.0 (2018-10-09)
 ------------------
 
 - Upgraded to IPython 7.0.1 / Jupyter.
